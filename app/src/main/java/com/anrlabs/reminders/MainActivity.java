@@ -30,6 +30,8 @@ public class MainActivity extends Activity {
                 title.setTextColor(Color.GREEN);
             }
         }
+
+
      }
 
 
