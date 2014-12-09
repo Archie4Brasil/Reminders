@@ -3,6 +3,7 @@ package com.anrlabs.reminders;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -11,16 +12,25 @@ import android.view.View;
  */
 public class NewReminder extends Activity{
 
+    protected Fragment fillFrame;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.reminder_new);
+
+        fillFrame = new TimeFragment();
+        FragmentTransaction fragTransaction = getFragmentManager().beginTransaction();
+        fragTransaction.replace(R.id.main_frag, fillFrame);
+        fragTransaction.commit();
+
     }
 
     //method to handle fragment selected: time or location (default time)
     public void selectFrag(View fragSelected)
     {
-        Fragment fillFrame;
+
 
         //sets fragment with view form class
         if(fragSelected==findViewById(R.id.locationFrag))
@@ -35,8 +45,21 @@ public class NewReminder extends Activity{
         //switch the content of the fragment
         FragmentTransaction fragTransaction = getFragmentManager().beginTransaction();
         fragTransaction.replace(R.id.main_frag, fillFrame);
-        fragTransaction.addToBackStack(null);
+        //fragTransaction.addToBackStack(null);
         fragTransaction.commit();
     }
 
+    //return to main without saving entry
+    public void cancelSaveData(View view) {
+        startActivity(new Intent(this, MainActivity.class));
+    }
+
+    //overriding back button to save data
+
+    @Override
+    public void onBackPressed() {
+
+
+        super.onBackPressed();
+    }
 }
