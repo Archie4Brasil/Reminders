@@ -7,10 +7,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
-
 
 public class MainActivity extends Activity {
 
@@ -22,6 +20,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         intent = new Intent(this,NewReminder.class);
 
+        //change action bar title color
         int actionBarTitleId = Resources.getSystem().getIdentifier("action_bar_title", "id", "android");
 
         if (actionBarTitleId > 0) {
@@ -29,10 +28,9 @@ public class MainActivity extends Activity {
             if (title != null) {
                 title.setTextColor(Color.GREEN);
             }
+
         }
-
-
-     }
+}
 
 
     @Override
@@ -50,10 +48,22 @@ public class MainActivity extends Activity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        //if (id == R.id.action_settings) {
-            //return true;
-       // }
-        startActivity(intent);
-        return super.onOptionsItemSelected(item);
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                return true;
+            case R.id.add_reminder:
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+
     }
+
+
 }
