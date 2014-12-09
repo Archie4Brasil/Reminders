@@ -9,7 +9,7 @@
     <item android:id="@+id/add_reminder"
         android:icon="@drawable/pic7"
         android:showAsAction="ifRoom"
-        android:title="Add Reminder"/>/>
+        android:title="Add Reminder"/>
 
 
 

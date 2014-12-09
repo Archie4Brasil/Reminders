@@ -18,7 +18,7 @@
         </activity>
         <activity
             android:name=".NewReminder"
-            android:label ="New Reminder"  >
+            android:label ="New Reminder" >
 
         </activity>
 

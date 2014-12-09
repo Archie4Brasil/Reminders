@@ -16,6 +16,7 @@ public class MainActivity extends Activity {
 
     Intent intent;
     SQLiteCursor cursor;
+    DatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,13 +33,7 @@ public class MainActivity extends Activity {
                 title.setTextColor(Color.GREEN);
             }
 
-            DatabaseHelper db = new DatabaseHelper(this, null, 1);
-
-            cursor = (SQLiteCursor) db.getReadableDatabase().rawQuery(
-                    "SELECT _ID, " + DatabaseHelper.TITLE + ", " + DatabaseHelper.MESSAGE + ", " +
-                            DatabaseHelper.DATE + " FROM " + DatabaseHelper.TABLE +
-                            ", " + DatabaseHelper.LOCATION +" ORDER BY " +
-                            DatabaseHelper.DATE, null);
+            populateListView();
 
       }
 }
@@ -78,11 +73,20 @@ public class MainActivity extends Activity {
 
     public void populateListView(){
 
+        db = new DatabaseHelper(this, null, 1);
+
+        cursor = (SQLiteCursor) db.getReadableDatabase().rawQuery("SELECT "+DatabaseHelper.ID+ ", "
+                + DatabaseHelper.TITLE + ", " + DatabaseHelper.MESSAGE + ", "
+                +DatabaseHelper.DATE + ", " + DatabaseHelper.TIME + ", "
+                + DatabaseHelper.LOCATION + " FROM " + DatabaseHelper.TABLE
+                + " ORDER BY " +DatabaseHelper.DATE, null);
+
+        SimpleCursorAdapter myCursorAdapter = new SimpleCursorAdapter(this, R.layout.row,
+                cursor, new String[] {DatabaseHelper.ID, DatabaseHelper.TITLE, DatabaseHelper.MESSAGE,
+                DatabaseHelper.DATE, DatabaseHelper.TIME, DatabaseHelper.LOCATION }, new int[] {R.id.id, R.id.title,
+                R.id.memo, R.id.date, R.id.time, R.id.location }, 0);
+
         ListView myListView = (ListView) findViewById(R.id.listViewMain);
-        SimpleCursorAdapter myCursorAdapter = new SimpleCursorAdapter(this, R.layout.activity_main,
-                cursor, new String[] { DatabaseHelper.TITLE, DatabaseHelper.MESSAGE,
-                DatabaseHelper.DATE, DatabaseHelper.TIME, DatabaseHelper.LOCATION }, new int[] { R.id.textView,
-                R.id.textView2, R.id.textView3 }, 0);
         myListView.setAdapter(myCursorAdapter);
 
     }
