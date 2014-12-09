@@ -82,7 +82,7 @@
 
         <fragment
             android:id="@+id/main_frag"
-            android:name="com.anrlabs.reminders.TimeFragment"
+            android:name="com.anrlabs.reminders.PlainFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="2"/>

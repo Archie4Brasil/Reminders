@@ -2,7 +2,6 @@ package com.anrlabs.reminders;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.View;
@@ -34,9 +33,9 @@ public class NewReminder extends Activity{
         }
 
         //switch the content of the fragment
-        FragmentManager manager = getFragmentManager();
-        FragmentTransaction fragTransaction = manager.beginTransaction();
+        FragmentTransaction fragTransaction = getFragmentManager().beginTransaction();
         fragTransaction.replace(R.id.main_frag, fillFrame);
+        fragTransaction.addToBackStack(null);
         fragTransaction.commit();
     }
 
