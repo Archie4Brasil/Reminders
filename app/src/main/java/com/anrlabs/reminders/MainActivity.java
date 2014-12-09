@@ -3,16 +3,19 @@ package com.anrlabs.reminders;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.database.sqlite.SQLiteCursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
     Intent intent;
+    SQLiteCursor cursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +32,15 @@ public class MainActivity extends Activity {
                 title.setTextColor(Color.GREEN);
             }
 
-        }
+            DatabaseHelper db = new DatabaseHelper(this, null, 1);
+
+            cursor = (SQLiteCursor) db.getReadableDatabase().rawQuery(
+                    "SELECT _ID, " + DatabaseHelper.TITLE + ", " + DatabaseHelper.MESSAGE + ", " +
+                            DatabaseHelper.DATE + " FROM " + DatabaseHelper.TABLE +
+                            ", " + DatabaseHelper.LOCATION +" ORDER BY " +
+                            DatabaseHelper.DATE, null);
+
+      }
 }
 
 
@@ -64,6 +75,18 @@ public class MainActivity extends Activity {
 
 
     }
+
+    public void populateListView(){
+
+        ListView myListView = (ListView) findViewById(R.id.listViewMain);
+        SimpleCursorAdapter myCursorAdapter = new SimpleCursorAdapter(this, R.layout.activity_main,
+                cursor, new String[] { DatabaseHelper.TITLE, DatabaseHelper.MESSAGE,
+                DatabaseHelper.DATE, DatabaseHelper.TIME, DatabaseHelper.LOCATION }, new int[] { R.id.textView,
+                R.id.textView2, R.id.textView3 }, 0);
+        myListView.setAdapter(myCursorAdapter);
+
+    }
+
 
 
 }
