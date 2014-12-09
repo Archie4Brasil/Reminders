@@ -73,7 +73,7 @@ public class MainActivity extends Activity {
 
     public void populateListView(){
 
-        db = new DatabaseHelper(this, null, 1);
+        db = new DatabaseHelper(this, DatabaseHelper.TABLE, null, 1);
 
         cursor = (SQLiteCursor) db.getReadableDatabase().rawQuery("SELECT "+DatabaseHelper.ID+ ", "
                 + DatabaseHelper.TITLE + ", " + DatabaseHelper.MESSAGE + ", "
