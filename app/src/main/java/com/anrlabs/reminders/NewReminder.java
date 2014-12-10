@@ -3,9 +3,11 @@ package com.anrlabs.reminders;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 
 /**
  * Created by Archie on 12/8/2014.
@@ -13,7 +15,9 @@ import android.view.View;
 public class NewReminder extends Activity{
 
     protected Fragment fillFrame;
-
+    DatabaseHelper dataCarrier;
+    ContentValues dataFiller;
+    EditText titleCarrier, memoCarrier;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +28,9 @@ public class NewReminder extends Activity{
         FragmentTransaction fragTransaction = getFragmentManager().beginTransaction();
         fragTransaction.replace(R.id.main_frag, fillFrame);
         fragTransaction.commit();
+
+        titleCarrier = (EditText) findViewById(R.id.titleBox);
+        memoCarrier = (EditText) findViewById(R.id.memoBox);
 
     }
 
@@ -59,6 +66,10 @@ public class NewReminder extends Activity{
     @Override
     public void onBackPressed() {
 
+        dataFiller = new ContentValues();
+        dataFiller.put(DatabaseHelper.TITLE,);
+
+        dataCarrier = new DatabaseHelper(this, DatabaseHelper.TABLE, null, 1);
 
         super.onBackPressed();
     }
