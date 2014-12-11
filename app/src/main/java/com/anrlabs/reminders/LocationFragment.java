@@ -19,7 +19,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 /**
  * Created by Archie on 12/8/2014.
  */
-public class LocationFragment extends MapFragment {
+public class LocationFragment extends Fragment {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private MapView map;

@@ -82,7 +82,7 @@ public class NewReminder extends FragmentActivity {
         if (fragSelected == findViewById(R.id.locationFrag)) {
             //fragTransaction.replace(R.id.main_frag, getFragmentManager().findFragmentById(R.id.map));
 
-            fillFrame = (MapFragment) new LocationFragment();
+            fillFrame = new LocationFragment();
 
 
             //fillFrame = getFragmentManager().findFragmentById(R.id.map);
