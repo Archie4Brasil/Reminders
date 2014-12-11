@@ -95,7 +95,7 @@ public class NewReminder extends FragmentActivity {
         fragTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         fragTransaction.addToBackStack(null);
         fragTransaction.commit();
-
+/*
         if (mapView == null) {
             mapView = new MapHelper();
             mapView.getRoadMap(this, "Grand Circus, Detroit, MI");
@@ -103,7 +103,7 @@ public class NewReminder extends FragmentActivity {
             latitude = mapView.getLatitude();
             longitude = mapView.getLongitude();
         }
-
+*/
 
     }
 

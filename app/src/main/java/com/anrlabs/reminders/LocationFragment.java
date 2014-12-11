@@ -23,17 +23,22 @@ public class LocationFragment extends MapFragment {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private MapView map;
-    private MapHelper mh;
+    //private MapHelper mh;
     Context context;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View v = inflater.inflate(R.layout.location_frag, container, false);
-        if(mMap == null) {
-            mMap = mh.getRoadMap(context.getApplicationContext(), "600 Independence Ave SW, Washington, DC 20560");
-            map = (MapView) v.findViewById(R.id.map);
-            map.onCreate(savedInstanceState);
+        map = (MapView) v.findViewById(R.id.map);
+        map.onCreate(savedInstanceState);
+        if(mMap == null){
+
+           // mMap = mh.getRoadMap(context.getApplicationContext(), "600 Independence Ave SW, Washington, DC 20560");
+
+            mMap = map.getMap();
+            mMap.setMyLocationEnabled(true);
+            mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+            mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
         }
         // Gets to GoogleMap from the MapView and does initialization stuff
         //mMap = map.getMap();
