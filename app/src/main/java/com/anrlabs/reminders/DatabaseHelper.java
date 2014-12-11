@@ -25,8 +25,8 @@ public class DatabaseHelper extends SQLiteOpenHelper
     private static final String DATABASE_NAME = "db";
     SQLiteDatabase db;
 
-    public DatabaseHelper(Context context, CursorFactory factory, int version) {
-        super(context, DATABASE_NAME, factory, version);
+    public DatabaseHelper(Context context, String tableName, CursorFactory factory, int version) {
+        super(context, tableName, factory, version);
     }
 
     @Override
