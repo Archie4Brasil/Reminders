@@ -8,6 +8,8 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.EditText;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -36,6 +38,7 @@ public class NewReminder extends FragmentActivity {
     private double radius;
     private Fragment mapFrag;
     private MapHelper mapView = null;
+    private MapFragment smf = null;
 
 
     @Override
@@ -56,9 +59,10 @@ public class NewReminder extends FragmentActivity {
         // setUpMapIfNeeded();
     }
 
+
     //method to handle fragment selected: time or location (default time)
     public void selectFrag(View fragSelected)
-    // public void selectFrag(View v)
+   // public void selectFrag(View v)
     {
         //sets fragment with view form class
         if (fragSelected == findViewById(R.id.locationFrag)) {
@@ -76,7 +80,7 @@ public class NewReminder extends FragmentActivity {
         fragTransaction.addToBackStack(null);
         fragTransaction.commit();
 
-        if (mapView == null) {
+        if(mapView == null) {
             mapView = new MapHelper();
             mapView.getRoadMap(this, "Grand Circus, Detroit, MI");
             mapView.setLocationRadius(10);
