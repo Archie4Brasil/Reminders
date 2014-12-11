@@ -18,25 +18,28 @@ public class DatabaseHelper extends SQLiteOpenHelper
     static final String MESSAGE = "message";
     static final String DATE = "date";
     static final String TIME = "time";
-    static final String LOCATION = "location";
+    static final String XCOORDS = "xcoords";
+    static final String YCOORDS = "ycoords";
+    static final String RADIUS = "radius";
     static final String TABLE = "reminders";
     private static final String DATABASE_NAME = "db";
     SQLiteDatabase db;
 
-    public DatabaseHelper(Context context, String name, CursorFactory factory, int version) {
-        super(context, name, factory, version);
+    public DatabaseHelper(Context context, CursorFactory factory, int version) {
+        super(context, DATABASE_NAME, factory, version);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE " + TABLE + " ("+ID+" INTEGER PRIMARY KEY AUTOINCREMENT, " + TITLE +
-                " TEXT, "+ MESSAGE + " TEXT, " + DATE + " TEXT, "+ TIME + " TEXT, " + LOCATION +
-                " TEXT);");
+        db.execSQL("CREATE TABLE " + TABLE + " ("+ID +" INTEGER PRIMARY KEY AUTOINCREMENT, " + TITLE +
+                " TEXT, "+ MESSAGE + " TEXT, " + DATE + " TEXT, "+ TIME + " TEXT, " + XCOORDS +
+                " TEXT, " + YCOORDS + " TEXT, " + RADIUS + " TEXT);");
     }
 
 
     public void addData(ContentValues cv){
         db = this.getWritableDatabase();
+
         db.insert(TABLE, TITLE, cv);
     }
 
@@ -46,4 +49,13 @@ public class DatabaseHelper extends SQLiteOpenHelper
         db.execSQL("DROP TABLE IF EXISTS scores");
         onCreate(db);
     }
+
+    public void insert(ContentValues cv) {
+        this.getWritableDatabase().insert(TABLE, TITLE, cv);
+    }
+
+    public void deleteData(long dataItem){
+        this.getWritableDatabase().delete(TABLE, "_id = " + dataItem, null);
+    }
+
 }

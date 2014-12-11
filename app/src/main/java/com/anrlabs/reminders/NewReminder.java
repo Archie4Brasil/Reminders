@@ -63,7 +63,7 @@ public class NewReminder extends Activity{
 
     //overriding back button to save data
 
-    @Override
+    /*@Override
     public void onBackPressed() {
 
         dataFiller = new ContentValues();
@@ -72,5 +72,5 @@ public class NewReminder extends Activity{
         dataCarrier = new DatabaseHelper(this, DatabaseHelper.TABLE, null, 1);
 
         super.onBackPressed();
-    }
+    }*/
 }
