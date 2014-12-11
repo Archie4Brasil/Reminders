@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.EditText;
 
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -68,8 +67,8 @@ public class NewReminder extends FragmentActivity {
         if (fragSelected == findViewById(R.id.locationFrag)) {
             //fragTransaction.replace(R.id.main_frag, getFragmentManager().findFragmentById(R.id.map));
 
-            //fillFrame = new LocationFragment();
-            fillFrame = getFragmentManager().findFragmentById(R.id.map);
+            fillFrame = new LocationFragment();
+            //fillFrame = getFragmentManager().findFragmentById(R.id.map);
             // fragTransaction.show(mapFrag);
         } else
             fillFrame = new TimeFragment();
