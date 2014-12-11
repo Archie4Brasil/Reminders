@@ -2,18 +2,11 @@ package com.anrlabs.reminders;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteCursor;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.SyncStateContract;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,11 +14,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.List;
-
-import static android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class MainActivity extends Activity {
 
@@ -45,7 +33,7 @@ public class MainActivity extends Activity {
 
         listView = (ListView) findViewById(R.id.listViewMain);
 
-        DatabaseHelper db = new DatabaseHelper(this, null, 1);
+        DatabaseHelper db = new DatabaseHelper(this, DatabaseHelper.TABLE, null, 1);
 
         ContentValues cv = new ContentValues();
 
@@ -107,7 +95,7 @@ public class MainActivity extends Activity {
 
     public void populateListView() {
 
-        db = new DatabaseHelper(this, null, 1);
+        db = new DatabaseHelper(this, DatabaseHelper.TABLE, null, 1);
 
         cursor = (SQLiteCursor) db.getReadableDatabase().rawQuery("SELECT " + DatabaseHelper.ID + ", "
                 + DatabaseHelper.TITLE + ", " + DatabaseHelper.MESSAGE + ", "
