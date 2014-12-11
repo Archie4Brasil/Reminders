@@ -45,7 +45,7 @@ public class MainActivity extends Activity {
 
         listView = (ListView) findViewById(R.id.listViewMain);
 
-        DatabaseHelper db = new DatabaseHelper(this, null, 1);
+        /*DatabaseHelper db = new DatabaseHelper(this, null, 1);
 
         ContentValues cv = new ContentValues();
 
@@ -56,7 +56,27 @@ public class MainActivity extends Activity {
         cv.put(DatabaseHelper.XCOORDS, "34.865788");
         cv.put(DatabaseHelper.YCOORDS, "-45.82319");
         cv.put(DatabaseHelper.RADIUS, "10");
-        db.insert(cv);
+        db.insert(cv);*/
+
+
+       /////////////////////// on Click listener for ListView (short click)////////////////////////
+
+       listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+           @Override
+           public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+               TextView pos = (TextView)view.findViewById(R.id.id);
+               String index = pos.getText().toString();
+
+               editItemInListDialog(index);
+
+           }
+       });
+
+        ////////////////////////////////////////////////////////////////////////////////////
+
+
+
+        ////////////////////// long click Listener for ListView ///////////////////////////////////
 
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             // setting onItemLongClickListener and passing the position to the function
@@ -105,6 +125,7 @@ public class MainActivity extends Activity {
         }
     }
 
+
     public void populateListView() {
 
         db = new DatabaseHelper(this, null, 1);
@@ -123,6 +144,38 @@ public class MainActivity extends Activity {
 
         ListView myListView = (ListView) findViewById(R.id.listViewMain);
         myListView.setAdapter(myCursorAdapter);
+
+    }
+    public void editItemInListDialog(String position){
+        final long editMessage = Long.parseLong(position);
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(
+                MainActivity.this);
+
+        alert.setTitle("Edit");
+        alert.setMessage("Do you want edit this reminder?");
+
+        alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                intent.putExtra("idNumber", editMessage);
+                startActivity(intent);
+
+                //populateListView();
+            }
+
+        });
+
+        alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+            }
+        });
+
+        alert.show();
 
     }
 
