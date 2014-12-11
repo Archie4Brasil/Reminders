@@ -1,43 +1,79 @@
 package com.anrlabs.reminders;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ListActivity;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteCursor;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.SyncStateContract;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.List;
+
+import static android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class MainActivity extends Activity {
 
     Intent intent;
     SQLiteCursor cursor;
     DatabaseHelper db;
+    ListView listView;
+    SimpleCursorAdapter myCursorAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        intent = new Intent(this,NewReminder.class);
+        intent = new Intent(this, NewReminder.class);
 
-        //change action bar title color
-        int actionBarTitleId = Resources.getSystem().getIdentifier("action_bar_title", "id", "android");
+        populateListView();
 
-        if (actionBarTitleId > 0) {
-            TextView title = (TextView) findViewById(actionBarTitleId);
-            if (title != null) {
-                title.setTextColor(Color.GREEN);
+        listView = (ListView) findViewById(R.id.listViewMain);
+
+        DatabaseHelper db = new DatabaseHelper(this, null, 1);
+
+        ContentValues cv = new ContentValues();
+
+        cv.put(DatabaseHelper.TITLE, "Call Kat");
+        cv.put(DatabaseHelper.MESSAGE, "She wants to go to the theater");
+        cv.put(DatabaseHelper.DATE, "12/23/14");
+        cv.put(DatabaseHelper.TIME, "6:00 P.M.");
+        cv.put(DatabaseHelper.XCOORDS, "34.865788");
+        cv.put(DatabaseHelper.YCOORDS, "-45.82319");
+        cv.put(DatabaseHelper.RADIUS, "10");
+        db.insert(cv);
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            // setting onItemLongClickListener and passing the position to the function
+            @Override
+            public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+                                           int position, long arg3) {
+
+             TextView pos = (TextView)arg1.findViewById(R.id.id);
+                String index = pos.getText().toString();
+
+                deleteItemFromList(index);
+
+                return true;
             }
+        });
 
-            populateListView();
-
-      }
-}
-
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -67,30 +103,60 @@ public class MainActivity extends Activity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-
-
     }
 
-    public void populateListView(){
+    public void populateListView() {
 
-        db = new DatabaseHelper(this, DatabaseHelper.TABLE, null, 1);
+        db = new DatabaseHelper(this, null, 1);
 
-        cursor = (SQLiteCursor) db.getReadableDatabase().rawQuery("SELECT "+DatabaseHelper.ID+ ", "
+        cursor = (SQLiteCursor) db.getReadableDatabase().rawQuery("SELECT " + DatabaseHelper.ID + ", "
                 + DatabaseHelper.TITLE + ", " + DatabaseHelper.MESSAGE + ", "
-                +DatabaseHelper.DATE + ", " + DatabaseHelper.TIME + ", "
-                + DatabaseHelper.LOCATION + " FROM " + DatabaseHelper.TABLE
-                + " ORDER BY " +DatabaseHelper.DATE, null);
+                + DatabaseHelper.DATE + ", " + DatabaseHelper.TIME + ", "
+                + DatabaseHelper.XCOORDS + ", " + DatabaseHelper.YCOORDS + ", " + DatabaseHelper.RADIUS +
+                " FROM " + DatabaseHelper.TABLE + " ORDER BY " + DatabaseHelper.DATE, null);
 
-        SimpleCursorAdapter myCursorAdapter = new SimpleCursorAdapter(this, R.layout.row,
-                cursor, new String[] {DatabaseHelper.ID, DatabaseHelper.TITLE, DatabaseHelper.MESSAGE,
-                DatabaseHelper.DATE, DatabaseHelper.TIME, DatabaseHelper.LOCATION }, new int[] {R.id.id, R.id.title,
-                R.id.memo, R.id.date, R.id.time, R.id.location }, 0);
+        myCursorAdapter = new SimpleCursorAdapter(this, R.layout.row,
+                cursor, new String[]{DatabaseHelper.ID, DatabaseHelper.TITLE, DatabaseHelper.MESSAGE,
+                DatabaseHelper.DATE, DatabaseHelper.TIME, DatabaseHelper.XCOORDS, DatabaseHelper.YCOORDS,
+                DatabaseHelper.RADIUS}, new int[]{R.id.id, R.id.title,
+                R.id.memo, R.id.date, R.id.time, R.id.xcoords, R.id.ycoords, R.id.radius}, 0);
 
         ListView myListView = (ListView) findViewById(R.id.listViewMain);
         myListView.setAdapter(myCursorAdapter);
 
     }
 
+    public void deleteItemFromList(String position) {
 
+        final long removeMessage = Long.parseLong(position);
+        AlertDialog.Builder alert = new AlertDialog.Builder(
+                MainActivity.this);
+
+        alert.setTitle("Delete");
+        alert.setMessage("Do you want delete this message?");
+
+        alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                db.deleteData(removeMessage);
+
+                populateListView();
+            }
+
+        });
+
+
+        alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+            }
+        });
+
+        alert.show();
+
+
+    }
 
 }
