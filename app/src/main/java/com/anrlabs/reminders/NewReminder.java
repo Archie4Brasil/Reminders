@@ -3,6 +3,7 @@ package com.anrlabs.reminders;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
@@ -67,7 +68,7 @@ public class NewReminder extends FragmentActivity {
         if (fragSelected == findViewById(R.id.locationFrag)) {
             //fragTransaction.replace(R.id.main_frag, getFragmentManager().findFragmentById(R.id.map));
 
-            fillFrame = new LocationFragment();
+            fillFrame =  new LocationFragment();
             //fillFrame = getFragmentManager().findFragmentById(R.id.map);
             // fragTransaction.show(mapFrag);
         } else
@@ -97,14 +98,15 @@ public class NewReminder extends FragmentActivity {
         }
     }
 
-    //overriding back button to save data
-    @Override
-    public void onBackPressed() {
+    //saving data
+    public void saveData(View v)
+    {
         savingData();
 
-        super.onBackPressed();
+        startActivity(new Intent(this, MainActivity.class));
     }
 
+    //populating DataBase
     public void savingData()
     {
         titleCarrier = (EditText) findViewById(R.id.titleBox);

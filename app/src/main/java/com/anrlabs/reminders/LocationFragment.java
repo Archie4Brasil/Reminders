@@ -1,5 +1,6 @@
 package com.anrlabs.reminders;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,13 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
  * Created by Archie on 12/8/2014.
  */
-public class LocationFragment extends MapFragment {
+public class LocationFragment extends Fragment {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private MapView map;
