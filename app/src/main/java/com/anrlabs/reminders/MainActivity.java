@@ -2,7 +2,6 @@ package com.anrlabs.reminders;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteCursor;
@@ -35,16 +34,6 @@ public class MainActivity extends Activity {
 
         DatabaseHelper db = new DatabaseHelper(this, DatabaseHelper.TABLE, null, 1);
 
-        ContentValues cv = new ContentValues();
-
-        cv.put(DatabaseHelper.TITLE, "Call Kat");
-        cv.put(DatabaseHelper.MESSAGE, "She wants to go to the theater");
-        cv.put(DatabaseHelper.DATE, "12/23/14");
-        cv.put(DatabaseHelper.TIME, "6:00 P.M.");
-        cv.put(DatabaseHelper.XCOORDS, "34.865788");
-        cv.put(DatabaseHelper.YCOORDS, "-45.82319");
-        cv.put(DatabaseHelper.RADIUS, "10");
-        db.insert(cv);
 
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             // setting onItemLongClickListener and passing the position to the function
