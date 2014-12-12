@@ -25,17 +25,7 @@ public class LocationFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.location_frag, container, false);
-        map = (MapView) v.findViewById(R.id.map);
-        map.onCreate(savedInstanceState);
-        if(mMap == null){
 
-           // mMap = mh.getRoadMap(context.getApplicationContext(), "600 Independence Ave SW, Washington, DC 20560");
-
-            mMap = map.getMap();
-            mMap.setMyLocationEnabled(true);
-            mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-            mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
-        }
         // Gets to GoogleMap from the MapView and does initialization stuff
         //mMap = map.getMap();
         return v;
