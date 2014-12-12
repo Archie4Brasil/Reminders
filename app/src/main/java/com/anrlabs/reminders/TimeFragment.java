@@ -104,8 +104,6 @@ public class TimeFragment extends Fragment{
         return hoursDB + ":" + minDB;
     }
 
-
-
     public static String passDate()
     {
         return monthDb + "/" + dayDB + "/" + yearDB;
