@@ -1,5 +1,6 @@
 package com.anrlabs.reminders;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.ContentValues;
@@ -16,8 +17,9 @@ import com.google.android.gms.maps.model.LatLng;
 /**
  * Created by Archie on 12/8/2014.
  */
-public class NewReminder extends FragmentActivity {
-
+public class NewReminder extends Activity {
+    Fragment timeFragment = new TimeFragment();
+    Fragment mapFragment = new LocationFragment();
     protected DatabaseHelper dataCarrier;
     protected ContentValues dataFiller;
     protected EditText titleCarrier, memoCarrier;
@@ -42,17 +44,10 @@ public class NewReminder extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.reminder_new);
-
-        fillFrame = new TimeFragment();
-        FragmentTransaction fragTransaction = getFragmentManager().beginTransaction();
-        fragTransaction.replace(R.id.main_frag, fillFrame);
-        fragTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        fragTransaction.addToBackStack(null);
-        fragTransaction.commit();
-
-
-        circle = new CircleOptions();
-        mapView = new MapHelper();
+       // FragmentTransaction fragTransaction = getFragmentManager().beginTransaction();
+       // fragTransaction.add(R.id.main_frag, timeFragment, "time").commit();
+      //  circle = new CircleOptions();
+       // mapView = new MapHelper();
         // setUpMapIfNeeded();
     }
 
@@ -60,38 +55,39 @@ public class NewReminder extends FragmentActivity {
     public void selectFrag(View fragSelected)
     // public void selectFrag(View v)
     {
-        //sets fragment with view form class
-        if (fragSelected == findViewById(R.id.locationFrag)) {
-            //fragTransaction.replace(R.id.main_frag, getFragmentManager().findFragmentById(R.id.map));
-
-            //fillFrame = new LocationFragment();
-            fillFrame = getFragmentManager().findFragmentById(R.id.map);
-            // fragTransaction.show(mapFrag);
-        } else
-            fillFrame = new TimeFragment();
-
-        fragTransaction = getFragmentManager().beginTransaction();
-        fragTransaction.replace(R.id.main_frag, fillFrame);
-        fragTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        fragTransaction.addToBackStack(null);
-        fragTransaction.commit();
-
-        if (mapView == null) {
-            mapView = new MapHelper();
-            mapView.getRoadMap(this, "Grand Circus, Detroit, MI");
-            mapView.setLocationRadius(10);
-            latitude = mapView.getLatitude();
-            longitude = mapView.getLongitude();
-            //sets fragment with view form class
-            if (fragSelected == findViewById(R.id.locationFrag)) {
-                fillFrame = new LocationFragment();
-            } else {
-                fillFrame = new TimeFragment();
+        if (fragSelected.getId() == R.id.buttonLocationFrag) {
+            if (getFragmentManager().findFragmentByTag("map") != null) {
+                if (getFragmentManager().findFragmentByTag("map").isAdded())
+                {
+                    getFragmentManager().beginTransaction().hide(timeFragment).commit();
+                    getFragmentManager().beginTransaction().show(mapFragment).commit();
+                }
+            } else{
+                if (getFragmentManager().findFragmentByTag("time") != null
+                        && getFragmentManager().findFragmentByTag("time").isAdded())
+                {
+                 getFragmentManager().beginTransaction().hide(timeFragment).commit();
+                }
+                getFragmentManager().beginTransaction().add(R.id.main_frag, mapFragment,"map").commit();
             }
 
-            dataCarrier = new DatabaseHelper(this, DatabaseHelper.TABLE, null, 1);
-            dataCarrier.addData(dataFiller);
+        } else
+        if (fragSelected.getId() == R.id.buttonTimeFrag) {
+            if (getFragmentManager().findFragmentByTag("time") != null ) {
+                if (getFragmentManager().findFragmentByTag("time").isAdded())
+                {
+                    getFragmentManager().beginTransaction().hide(mapFragment).commit();
+                    getFragmentManager().beginTransaction().show(timeFragment).commit();
+                }
+            } else{
+                if (getFragmentManager().findFragmentByTag("map")!=null
+                        && getFragmentManager().findFragmentByTag("map").isAdded()) {
+                    getFragmentManager().beginTransaction().hide(mapFragment).commit();
+                }
+                getFragmentManager().beginTransaction().add(R.id.main_frag, timeFragment,"time").commit();
+            }
         }
+
     }
 
     //overriding back button to save data
@@ -113,7 +109,7 @@ public class NewReminder extends FragmentActivity {
         dataFiller.put(DatabaseHelper.TIME, TimeFragment.passTime());
         dataFiller.put(DatabaseHelper.DATE, TimeFragment.passDate());
 
-        dataCarrier = new DatabaseHelper(this, DatabaseHelper.TABLE, null, 1);
+       // dataCarrier = new DatabaseHelper(this, DatabaseHelper.TABLE, null, 1);
         dataCarrier.addData(dataFiller);
     }
 }
