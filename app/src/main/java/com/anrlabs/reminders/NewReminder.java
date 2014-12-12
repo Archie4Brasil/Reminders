@@ -4,33 +4,39 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.ContentValues;
-import android.content.Intent;
 import android.os.Bundle;
-import android.text.InputType;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
-import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.TimePicker;
-import android.widget.Toast;
+
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
+
 
 /**
  * Created by Archie on 12/8/2014.
  */
-public class NewReminder extends Activity{
+public class NewReminder extends FragmentActivity {
 
-    protected Fragment fillFrame;
     protected DatabaseHelper dataCarrier;
     protected ContentValues dataFiller;
     protected EditText titleCarrier, memoCarrier;
-    private DatePicker datePicked;
-    private TimePicker timePicked;
-    public static String dateDB, timeDB;
-    private int myHour, myMinute;
-
-    /////////////////////////////////// added by michael //////////////////////////////////////////
-    private long rowID;
-    int year,day,month;
-    ///////////////////////////////////////////////////////////////////////////////////////////////
+    protected Fragment fillFrame, other;
+    private MapView map;
+    private FragmentTransaction fragTransaction;
+    double latitude;
+    double longitude;
+    String Address1;
+    String Address2;
+    String State;
+    String zipcode;
+    String Country;
+    CircleOptions circle;
+    LatLng center;
+    private double radius;
+    private Fragment mapFrag;
+    private MapHelper mapView = null;
 
 
     @Override
@@ -41,59 +47,53 @@ public class NewReminder extends Activity{
         fillFrame = new TimeFragment();
         FragmentTransaction fragTransaction = getFragmentManager().beginTransaction();
         fragTransaction.replace(R.id.main_frag, fillFrame);
+        fragTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        fragTransaction.addToBackStack(null);
         fragTransaction.commit();
 
-        titleCarrier = (EditText) findViewById(R.id.titleBox);
-        memoCarrier = (EditText) findViewById(R.id.memoBox);
 
-        datePicked = (DatePicker) findViewById(R.id.dateRemember);
-        timePicked = (TimePicker) findViewById(R.id.timeRemeber);
-
-
-
-
-
-//////////////////////////////////// Coded by Michael ////////////////////////////////////////////////
-        year = 2114;
-        month = 12;
-        day = 12;
-
-        populateReminder();
+        circle = new CircleOptions();
+        mapView = new MapHelper();
+        // setUpMapIfNeeded();
     }
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
 
     //method to handle fragment selected: time or location (default time)
     public void selectFrag(View fragSelected)
+    // public void selectFrag(View v)
     {
         //sets fragment with view form class
-        if(fragSelected==findViewById(R.id.locationFrag))
-        {
-            fillFrame = new LocationFragment();
-        }
-        else
-        {
+        if (fragSelected == findViewById(R.id.locationFrag)) {
+            //fragTransaction.replace(R.id.main_frag, getFragmentManager().findFragmentById(R.id.map));
+
+            //fillFrame = new LocationFragment();
+            fillFrame = getFragmentManager().findFragmentById(R.id.map);
+            // fragTransaction.show(mapFrag);
+        } else
             fillFrame = new TimeFragment();
-        }
 
-        //switch the content of the fragment
-        FragmentTransaction fragTransaction = getFragmentManager().beginTransaction();
+        fragTransaction = getFragmentManager().beginTransaction();
         fragTransaction.replace(R.id.main_frag, fillFrame);
-        //fragTransaction.addToBackStack(null);
+        fragTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        fragTransaction.addToBackStack(null);
         fragTransaction.commit();
+
+        if (mapView == null) {
+            mapView = new MapHelper();
+            mapView.getRoadMap(this, "Grand Circus, Detroit, MI");
+            mapView.setLocationRadius(10);
+            latitude = mapView.getLatitude();
+            longitude = mapView.getLongitude();
+            //sets fragment with view form class
+            if (fragSelected == findViewById(R.id.locationFrag)) {
+                fillFrame = new LocationFragment();
+            } else {
+                fillFrame = new TimeFragment();
+            }
+
+            dataCarrier = new DatabaseHelper(this, DatabaseHelper.TABLE, null, 1);
+            dataCarrier.addData(dataFiller);
+        }
     }
-
-    //return to main without saving entry
-    public void cancelSaveData(View view) {
-        startActivity(new Intent(this, MainActivity.class));
-        Toast.makeText(this, timeDB, Toast.LENGTH_SHORT);
-    }
-
-
 
     //overriding back button to save data
     @Override
@@ -105,8 +105,8 @@ public class NewReminder extends Activity{
 
     public void savingData()
     {
-        titleCarrier.setInputType(InputType.TYPE_CLASS_TEXT);
-        memoCarrier.setInputType(InputType.TYPE_CLASS_TEXT);
+        titleCarrier = (EditText) findViewById(R.id.titleBox);
+        memoCarrier = (EditText) findViewById(R.id.memoBox);
 
         dataFiller = new ContentValues();
         dataFiller.put(DatabaseHelper.TITLE, titleCarrier.getText().toString());
@@ -114,41 +114,7 @@ public class NewReminder extends Activity{
         dataFiller.put(DatabaseHelper.TIME, TimeFragment.passTime());
         dataFiller.put(DatabaseHelper.DATE, TimeFragment.passDate());
 
-        //???????????????????? constructor takes 3 params, super constructor takes 4 params ?????
         dataCarrier = new DatabaseHelper(this, DatabaseHelper.TABLE, null, 1);
         dataCarrier.addData(dataFiller);
-/////////////////////////////////////////////////////////////////////////////////////////////////
-
     }
-
-
-
-
-
-    ////////////////////////////// Code by Michael ///////////////////////////////////
-    public void populateReminder(){
-
-        //Toast.makeText(this, "Editing mode!", Toast.LENGTH_LONG).show();
-
-        //if (savedInstanceState == null)
-
-        long dataBaseID = getIntent().getLongExtra("idNumber", rowID);
-
-        EditText editMemo = (EditText)findViewById(R.id.memoBox);
-        editMemo.setText("Go to the cleaners at noon");
-
-        EditText editTitle = (EditText) findViewById(R.id.titleBox);
-        editTitle.setText("Cleaners");
-
-        DatePicker editDate = (DatePicker)findViewById(R.id.dateRemember);
-        //editDate.init(year, month, day, null);
-        //editDate.updateDate(2014, 12, 10);
-
-
-        TimePicker editTIme = (TimePicker)findViewById(R.id.timeRemeber);
-        //editTIme.setCurrentHour(1);
-          //editTIme.setCurrentMinute(25);
-
-       }
-    ////////////////////////////////////////////////////////////////////////////////////////////
 }
