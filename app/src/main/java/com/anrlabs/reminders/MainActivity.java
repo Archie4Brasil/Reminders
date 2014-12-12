@@ -28,12 +28,15 @@ import java.util.List;
 import static android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class MainActivity extends Activity {
+    Context ctx= this;
 
     Intent intent;
     SQLiteCursor cursor;
     DatabaseHelper db;
     ListView listView;
     SimpleCursorAdapter myCursorAdapter;
+
+    private static DatabaseHelper sInstance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +48,38 @@ public class MainActivity extends Activity {
 
         listView = (ListView) findViewById(R.id.listViewMain);
 
-        DatabaseHelper db = new DatabaseHelper(this, DatabaseHelper.TABLE, null, 1);
 
+
+        ContentValues cv = new ContentValues();
+
+        cv.put(DatabaseHelper.TITLE, "Call Kat");
+        cv.put(DatabaseHelper.MESSAGE, "She wants to go to the theater");
+        cv.put(DatabaseHelper.DATE, "12/23/14");
+        cv.put(DatabaseHelper.TIME, "6:00 P.M.");
+        cv.put(DatabaseHelper.XCOORDS, "34.865788");
+        cv.put(DatabaseHelper.YCOORDS, "-45.82319");
+        cv.put(DatabaseHelper.RADIUS, "10");
+        DatabaseHelper.getInstance(this).insert(cv);
+
+
+       /////////////////////// on Click listener for ListView (short click)////////////////////////
+
+       listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+           @Override
+           public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+               TextView pos = (TextView)view.findViewById(R.id.id);
+               String index = pos.getText().toString();
+
+               editItemInListDialog(index);
+
+           }
+       });
+
+        ////////////////////////////////////////////////////////////////////////////////////
+
+
+
+        ////////////////////// long click Listener for ListView ///////////////////////////////////
 
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             // setting onItemLongClickListener and passing the position to the function
@@ -63,6 +96,19 @@ public class MainActivity extends Activity {
             }
         });
 
+
+
+
+       /* ContentValues cv = new ContentValues();
+
+        cv.put(DatabaseHelper.TITLE, "Call Kat");
+        cv.put(DatabaseHelper.MESSAGE, "She wants to go to the theater");
+        cv.put(DatabaseHelper.DATE, "12/23/14");
+        cv.put(DatabaseHelper.TIME, "6:00 P.M.");
+        cv.put(DatabaseHelper.XCOORDS, "34.865788");
+        cv.put(DatabaseHelper.YCOORDS, "-45.82319");
+        cv.put(DatabaseHelper.RADIUS, "10");
+        db.insert(cv);*/
     }
 
     @Override
@@ -97,13 +143,9 @@ public class MainActivity extends Activity {
 
     public void populateListView() {
 
-        db = new DatabaseHelper(this, DatabaseHelper.TABLE, null, 1);
 
-        cursor = (SQLiteCursor) db.getReadableDatabase().rawQuery("SELECT " + DatabaseHelper.ID + ", "
-                + DatabaseHelper.TITLE + ", " + DatabaseHelper.MESSAGE + ", "
-                + DatabaseHelper.DATE + ", " + DatabaseHelper.TIME + ", "
-                + DatabaseHelper.XCOORDS + ", " + DatabaseHelper.YCOORDS + ", " + DatabaseHelper.RADIUS +
-                " FROM " + DatabaseHelper.TABLE + " ORDER BY " + DatabaseHelper.DATE, null);
+        Cursor cursor = DatabaseHelper.getInstance(this).loadReminders();
+
 
         myCursorAdapter = new SimpleCursorAdapter(this, R.layout.row,
                 cursor, new String[]{DatabaseHelper.ID, DatabaseHelper.TITLE, DatabaseHelper.MESSAGE,
@@ -160,7 +202,7 @@ public class MainActivity extends Activity {
         alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                db.deleteData(removeMessage);
+                DatabaseHelper.getInstance(ctx).deleteData(removeMessage);
 
                 populateListView();
             }
