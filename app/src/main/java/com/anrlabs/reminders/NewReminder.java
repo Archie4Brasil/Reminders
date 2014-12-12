@@ -64,17 +64,7 @@ public class NewReminder extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.reminder_new);
 
-        fillFrame = new TimeFragment();
-        FragmentTransaction fragTransaction = getFragmentManager().beginTransaction();
-        fragTransaction.replace(R.id.main_frag, fillFrame);
-        fragTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        fragTransaction.addToBackStack(null);
-        fragTransaction.commit();
 
-
-        circle = new CircleOptions();
-        mapView = new MapHelper();
-        // setUpMapIfNeeded();
 
         // Retrieve a PendingIntent that will perform a broadcast
         alarmIntent = new Intent(this, AlarmHandler.class);
