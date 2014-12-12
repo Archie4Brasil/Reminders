@@ -12,6 +12,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class DatabaseHelper extends SQLiteOpenHelper
 {
@@ -94,5 +97,23 @@ public class DatabaseHelper extends SQLiteOpenHelper
                 new String[] { String.valueOf(id) }, null, null, null, null);
        return cursor;
     }
+    public List<String> loadTitlesForNotification(String ids[]) {
+        List<String> lstIds = new ArrayList<String>();
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("Select " + TITLE + " from " + TABLE + " where _id  in (");
+        for (String str : ids) {
+            buffer.append("'").append(str).append("'").append(",");
+        }
 
+        buffer.append("'").append("null").append("')");
+        System.out.println(buffer.toString());
+
+        Cursor cursor = this.getReadableDatabase().rawQuery(buffer.toString(), null);
+        cursor.moveToFirst();
+        while(cursor.isAfterLast() == false){
+            lstIds.add(cursor.getString(cursor.getColumnIndex(TITLE)));
+            cursor.moveToNext();
+        }
+        return lstIds;
+    }
 }
