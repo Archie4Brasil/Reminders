@@ -20,6 +20,7 @@ public class TimeFragment extends Fragment{
     static int hoursDB, minDB, yearDB, monthDb, dayDB;
     View fragTrasnport;
     Bundle saveState;
+    private static Calendar today;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -29,7 +30,7 @@ public class TimeFragment extends Fragment{
         timePicked.setIs24HourView(true);
         timePicked.setOnTimeChangedListener(OnTimeChanged);
 
-        Calendar today = Calendar.getInstance();
+        today = Calendar.getInstance();
         datePicked = (DatePicker) fragTrasnport.findViewById(R.id.dateRemember);
         datePicked.init(today.get(Calendar.YEAR), today.get(Calendar.MONTH),
                     today.get(Calendar.DAY_OF_MONTH), onDateChanged);
@@ -94,12 +95,16 @@ public class TimeFragment extends Fragment{
 
         DatabaseHelper dateStamp = new DatabaseHelper(null, DatabaseHelper.TABLE, null,1);
         dateStamp.addData(temp);
+
+
     }
 
     public static String passTime()
     {
         return hoursDB + ":" + minDB;
     }
+
+
 
     public static String passDate()
     {
@@ -111,5 +116,13 @@ public class TimeFragment extends Fragment{
         timePicked.setCurrentMinute(min);
         timePicked.setCurrentHour(hour);
 
+    }
+
+    public static long timeAlarmMillis()
+    {
+        today.set(yearDB, monthDb, dayDB, hoursDB, minDB);
+
+        //machine milliseconds * Milliseconds * seconds * min * hour * day * month * year
+        return (System.currentTimeMillis() + today.getTimeInMillis());
     }
 }

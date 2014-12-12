@@ -1,18 +1,19 @@
 package com.anrlabs.reminders;
 
+import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.app.PendingIntent;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.CircleOptions;
-import com.google.android.gms.maps.model.LatLng;
 
 
 /**
@@ -24,21 +25,14 @@ public class NewReminder extends FragmentActivity {
     protected ContentValues dataFiller;
     protected EditText titleCarrier, memoCarrier;
     protected Fragment fillFrame, other;
-    private MapView map;
     private FragmentTransaction fragTransaction;
     double latitude;
     double longitude;
-    String Address1;
-    String Address2;
-    String State;
-    String zipcode;
-    String Country;
     CircleOptions circle;
-    LatLng center;
-    private double radius;
-    private Fragment mapFrag;
     private MapHelper mapView = null;
-    private MapFragment smf = null;
+    private PendingIntent pendingIntent;
+    private AlarmManager manager;
+    private Intent alarmIntent;
 
 
     @Override
@@ -57,6 +51,10 @@ public class NewReminder extends FragmentActivity {
         circle = new CircleOptions();
         mapView = new MapHelper();
         // setUpMapIfNeeded();
+
+        // Retrieve a PendingIntent that will perform a broadcast
+        alarmIntent = new Intent(this, AlarmHandler.class);
+        pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
     }
 
 
@@ -102,6 +100,7 @@ public class NewReminder extends FragmentActivity {
     public void saveData(View v)
     {
         savingData();
+        settingAlarm();
 
         startActivity(new Intent(this, MainActivity.class));
     }
@@ -120,5 +119,16 @@ public class NewReminder extends FragmentActivity {
 
         dataCarrier = new DatabaseHelper(this, DatabaseHelper.TABLE, null, 1);
         dataCarrier.addData(dataFiller);
+    }
+
+    public void settingAlarm()
+    {
+        alarmIntent.putExtra("dataID", DatabaseHelper.ID);
+
+        manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        int interval = 10000;
+
+        manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, TimeFragment.timeAlarmMillis(), 0, pendingIntent);
+        Toast.makeText(this, "Alarm Set", Toast.LENGTH_SHORT).show();
     }
 }
