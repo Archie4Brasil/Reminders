@@ -2,18 +2,12 @@ package com.anrlabs.reminders;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ListActivity;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteCursor;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.SyncStateContract;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,11 +15,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.List;
-
-import static android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class MainActivity extends Activity {
     Context ctx= this;
@@ -33,8 +22,8 @@ public class MainActivity extends Activity {
     Intent intent;
     SQLiteCursor cursor;
     DatabaseHelper db;
-    ListView listView;
     SimpleCursorAdapter myCursorAdapter;
+    protected ListView myListView;
 
     private static DatabaseHelper sInstance;
 
@@ -46,25 +35,11 @@ public class MainActivity extends Activity {
 
         populateListView();
 
-        listView = (ListView) findViewById(R.id.listViewMain);
-
-
-
-        ContentValues cv = new ContentValues();
-
-        cv.put(DatabaseHelper.TITLE, "Call Kat");
-        cv.put(DatabaseHelper.MESSAGE, "She wants to go to the theater");
-        cv.put(DatabaseHelper.DATE, "12/23/14");
-        cv.put(DatabaseHelper.TIME, "6:00 P.M.");
-        cv.put(DatabaseHelper.XCOORDS, "34.865788");
-        cv.put(DatabaseHelper.YCOORDS, "-45.82319");
-        cv.put(DatabaseHelper.RADIUS, "10");
-        DatabaseHelper.getInstance(this).insert(cv);
 
 
        /////////////////////// on Click listener for ListView (short click)////////////////////////
 
-       listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+       myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
            @Override
            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                TextView pos = (TextView)view.findViewById(R.id.id);
@@ -81,7 +56,7 @@ public class MainActivity extends Activity {
 
         ////////////////////// long click Listener for ListView ///////////////////////////////////
 
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        myListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             // setting onItemLongClickListener and passing the position to the function
             @Override
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
@@ -153,7 +128,7 @@ public class MainActivity extends Activity {
                 DatabaseHelper.RADIUS}, new int[]{R.id.id, R.id.title,
                 R.id.memo, R.id.date, R.id.time, R.id.xcoords, R.id.ycoords, R.id.radius}, 0);
 
-        ListView myListView = (ListView) findViewById(R.id.listViewMain);
+        myListView = (ListView) findViewById(R.id.listViewMain);
         myListView.setAdapter(myCursorAdapter);
 
     }

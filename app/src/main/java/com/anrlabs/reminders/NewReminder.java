@@ -1,28 +1,22 @@
 package com.anrlabs.reminders;
 
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.ContentValues;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteCursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.Toast;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.CircleOptions;
-import com.google.android.gms.maps.model.LatLng;
 
 
 /**
@@ -134,8 +128,6 @@ public class NewReminder extends FragmentActivity {
 
         DatabaseHelper.getInstance(this).addData(dataFiller);
 
-        dataCarrier = new DatabaseHelper(this, DatabaseHelper.TABLE, null, 1);
-        dataCarrier.addData(dataFiller);
     }
 
     public void settingAlarm()

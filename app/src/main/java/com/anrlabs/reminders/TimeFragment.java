@@ -93,9 +93,6 @@ public class TimeFragment extends Fragment{
         ContentValues temp = new ContentValues();
         temp.put(DatabaseHelper.TIME, hoursDB + ":" + minDB);
 
-        DatabaseHelper dateStamp = new DatabaseHelper(null, DatabaseHelper.TABLE, null,1);
-        dateStamp.addData(temp);
-
 
     }
 
