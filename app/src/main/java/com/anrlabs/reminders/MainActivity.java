@@ -2,8 +2,10 @@ package com.anrlabs.reminders;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteCursor;
 import android.os.Bundle;
 import android.view.Menu;
@@ -15,12 +17,15 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
+    Context ctx= this;
 
     Intent intent;
     SQLiteCursor cursor;
     DatabaseHelper db;
-    ListView listView;
     SimpleCursorAdapter myCursorAdapter;
+    protected ListView myListView;
+
+    private static DatabaseHelper sInstance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,12 +35,28 @@ public class MainActivity extends Activity {
 
         populateListView();
 
-        listView = (ListView) findViewById(R.id.listViewMain);
-
-        DatabaseHelper db = new DatabaseHelper(this, DatabaseHelper.TABLE, null, 1);
 
 
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+       /////////////////////// on Click listener for ListView (short click)////////////////////////
+
+       myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+           @Override
+           public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+               TextView pos = (TextView)view.findViewById(R.id.id);
+               String index = pos.getText().toString();
+
+               editItemInListDialog(index);
+
+           }
+       });
+
+        ////////////////////////////////////////////////////////////////////////////////////
+
+
+
+        ////////////////////// long click Listener for ListView ///////////////////////////////////
+
+        myListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             // setting onItemLongClickListener and passing the position to the function
             @Override
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
@@ -50,6 +71,19 @@ public class MainActivity extends Activity {
             }
         });
 
+
+
+
+       /* ContentValues cv = new ContentValues();
+
+        cv.put(DatabaseHelper.TITLE, "Call Kat");
+        cv.put(DatabaseHelper.MESSAGE, "She wants to go to the theater");
+        cv.put(DatabaseHelper.DATE, "12/23/14");
+        cv.put(DatabaseHelper.TIME, "6:00 P.M.");
+        cv.put(DatabaseHelper.XCOORDS, "34.865788");
+        cv.put(DatabaseHelper.YCOORDS, "-45.82319");
+        cv.put(DatabaseHelper.RADIUS, "10");
+        db.insert(cv);*/
     }
 
     @Override
@@ -84,13 +118,9 @@ public class MainActivity extends Activity {
 
     public void populateListView() {
 
-        db = new DatabaseHelper(this, DatabaseHelper.TABLE, null, 1);
 
-        cursor = (SQLiteCursor) db.getReadableDatabase().rawQuery("SELECT " + DatabaseHelper.ID + ", "
-                + DatabaseHelper.TITLE + ", " + DatabaseHelper.MESSAGE + ", "
-                + DatabaseHelper.DATE + ", " + DatabaseHelper.TIME + ", "
-                + DatabaseHelper.XCOORDS + ", " + DatabaseHelper.YCOORDS + ", " + DatabaseHelper.RADIUS +
-                " FROM " + DatabaseHelper.TABLE + " ORDER BY " + DatabaseHelper.DATE, null);
+        Cursor cursor = DatabaseHelper.getInstance(this).loadReminders();
+
 
         myCursorAdapter = new SimpleCursorAdapter(this, R.layout.row,
                 cursor, new String[]{DatabaseHelper.ID, DatabaseHelper.TITLE, DatabaseHelper.MESSAGE,
@@ -98,8 +128,40 @@ public class MainActivity extends Activity {
                 DatabaseHelper.RADIUS}, new int[]{R.id.id, R.id.title,
                 R.id.memo, R.id.date, R.id.time, R.id.xcoords, R.id.ycoords, R.id.radius}, 0);
 
-        ListView myListView = (ListView) findViewById(R.id.listViewMain);
+        myListView = (ListView) findViewById(R.id.listViewMain);
         myListView.setAdapter(myCursorAdapter);
+
+    }
+    public void editItemInListDialog(String position){
+        final long editMessage = Long.parseLong(position);
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(
+                MainActivity.this);
+
+        alert.setTitle("Edit");
+        alert.setMessage("Do you want edit this reminder?");
+
+        alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                intent.putExtra("idNumber", editMessage);
+                startActivity(intent);
+
+                //populateListView();
+            }
+
+        });
+
+        alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+            }
+        });
+
+        alert.show();
 
     }
 
@@ -115,7 +177,7 @@ public class MainActivity extends Activity {
         alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                db.deleteData(removeMessage);
+                DatabaseHelper.getInstance(ctx).deleteData(removeMessage);
 
                 populateListView();
             }

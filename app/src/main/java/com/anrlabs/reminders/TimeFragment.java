@@ -15,11 +15,12 @@ import java.util.Calendar;
  * Created by Archie on 12/8/2014.
  */
 public class TimeFragment extends Fragment{
-    TimePicker timePicked;
-    DatePicker datePicked;
+    static TimePicker timePicked;
+    static DatePicker datePicked;
     static int hoursDB, minDB, yearDB, monthDb, dayDB;
     View fragTrasnport;
     Bundle saveState;
+    private static Calendar today;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -92,8 +93,7 @@ public class TimeFragment extends Fragment{
         ContentValues temp = new ContentValues();
         temp.put(DatabaseHelper.TIME, hoursDB + ":" + minDB);
 
-       // DatabaseHelper dateStamp = new DatabaseHelper(null, DatabaseHelper.TABLE, null,1);
-       // dateStamp.addData(temp);
+        
     }
 
     public static String passTime()
@@ -104,5 +104,20 @@ public class TimeFragment extends Fragment{
     public static String passDate()
     {
         return monthDb + "/" + dayDB + "/" + yearDB;
+    }
+
+    public static void setTime(int hour, int min)
+    {
+        timePicked.setCurrentMinute(min);
+        timePicked.setCurrentHour(hour);
+
+    }
+
+    public static long timeAlarmMillis()
+    {
+        today.set(yearDB, monthDb, dayDB, hoursDB, minDB);
+
+        //machine milliseconds * Milliseconds * seconds * min * hour * day * month * year
+        return (System.currentTimeMillis() + today.getTimeInMillis());
     }
 }

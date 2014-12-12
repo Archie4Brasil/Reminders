@@ -1,13 +1,21 @@
 package com.anrlabs.reminders;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.app.PendingIntent;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -38,17 +46,39 @@ public class NewReminder extends Activity {
     private double radius;
     private Fragment mapFrag;
     private MapHelper mapView = null;
+    private PendingIntent pendingIntent;
+    private AlarmManager manager;
+    private Intent alarmIntent;
+
+
+    /////////////////////////////////// added by michael //////////////////////////////////////////
+    private long rowID;
+    int year,day,month;
+    //SQLiteCursor cursor;
+    Cursor cursor;
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.reminder_new);
-       // FragmentTransaction fragTransaction = getFragmentManager().beginTransaction();
-       // fragTransaction.add(R.id.main_frag, timeFragment, "time").commit();
-      //  circle = new CircleOptions();
-       // mapView = new MapHelper();
+
+        fillFrame = new TimeFragment();
+        FragmentTransaction fragTransaction = getFragmentManager().beginTransaction();
+        fragTransaction.replace(R.id.main_frag, fillFrame);
+        fragTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        fragTransaction.addToBackStack(null);
+        fragTransaction.commit();
+
+
+        circle = new CircleOptions();
+        mapView = new MapHelper();
         // setUpMapIfNeeded();
+
+        // Retrieve a PendingIntent that will perform a broadcast
+        alarmIntent = new Intent(this, AlarmHandler.class);
+        pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
     }
 
     //method to handle fragment selected: time or location (default time)
@@ -71,7 +101,7 @@ public class NewReminder extends Activity {
                 getFragmentManager().beginTransaction().add(R.id.main_frag, mapFragment,"map").commit();
             }
 
-        } else
+         } else
         if (fragSelected.getId() == R.id.buttonTimeFrag) {
             if (getFragmentManager().findFragmentByTag("time") != null ) {
                 if (getFragmentManager().findFragmentByTag("time").isAdded())
@@ -86,18 +116,19 @@ public class NewReminder extends Activity {
                 }
                 getFragmentManager().beginTransaction().add(R.id.main_frag, timeFragment,"time").commit();
             }
-        }
-
+       }
     }
 
-    //overriding back button to save data
-    @Override
-    public void onBackPressed() {
+    //saving data
+    public void saveData(View v)
+    {
         savingData();
+        settingAlarm();
 
         super.onBackPressed();
     }
 
+    //populating DataBase
     public void savingData()
     {
         titleCarrier = (EditText) findViewById(R.id.titleBox);
@@ -109,7 +140,70 @@ public class NewReminder extends Activity {
         dataFiller.put(DatabaseHelper.TIME, TimeFragment.passTime());
         dataFiller.put(DatabaseHelper.DATE, TimeFragment.passDate());
 
-       // dataCarrier = new DatabaseHelper(this, DatabaseHelper.TABLE, null, 1);
-        dataCarrier.addData(dataFiller);
+        DatabaseHelper.getInstance(this).addData(dataFiller);
+
     }
+
+    public void settingAlarm()
+    {
+        alarmIntent.putExtra("dataID", DatabaseHelper.ID);
+
+        manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        int interval = 10000;
+
+        manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, TimeFragment.timeAlarmMillis(), 0, pendingIntent);
+        Toast.makeText(this, "Alarm Set", Toast.LENGTH_SHORT).show();
+    }
+
+
+    ////////////////////////////// Code by Michael ///////////////////////////////////
+    public void populateReminder(){
+
+        //Toast.makeText(this, "Editing mode!", Toast.LENGTH_LONG).show();
+
+        long dataBaseID = getIntent().getLongExtra("idNumber", rowID);
+        cursor = DatabaseHelper.getInstance(this).editRemiders(16);
+        //getRowData(dataBaseID);
+
+        EditText editMemo = (EditText)findViewById(R.id.memoBox);
+        editMemo.setText(cursor.getString(2));
+
+        EditText editTitle = (EditText) findViewById(R.id.titleBox);
+        editTitle.setText(cursor.getString(1));
+
+        DatePicker editDate = (DatePicker)findViewById(R.id.dateRemember);
+        //editDate.init(year, month, day, null);
+        //editDate.updateDate(2014, 12, 10);
+
+
+        TimePicker editTIme = (TimePicker)findViewById(R.id.timeRemeber);
+        //editTIme.setCurrentHour(1);
+          //editTIme.setCurrentMinute(25);
+
+       }
+
+       public void getRowData(long id){
+
+           /*SQLiteDatabase db = dataCarrier.getReadableDatabase();
+
+
+
+           //Integer.parseInt(cursor.getString(0));
+
+
+
+         /* dataCarrier = new DatabaseHelper(this, DatabaseHelper.TABLE, null, 1);
+
+           cursor = (SQLiteCursor) dataCarrier.getReadableDatabase().rawQuery("SELECT " + DatabaseHelper.ID + ", "
+                   + DatabaseHelper.TITLE + ", " + DatabaseHelper.MESSAGE + ", "
+                   + DatabaseHelper.DATE + ", " + DatabaseHelper.TIME + ", "
+                   + DatabaseHelper.XCOORDS + ", " + DatabaseHelper.YCOORDS + ", " + DatabaseHelper.RADIUS +
+                   " FROM " + DatabaseHelper.TABLE + " ORDER BY " + DatabaseHelper.DATE, null);
+           if (cursor != null) {
+
+               cursor.moveToFirst();
+           }*/
+       }
+    ////////////////////////////////////////////////////////////////////////////////////////////
+
 }
