@@ -3,23 +3,17 @@ package com.anrlabs.reminders;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
-import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.CircleOptions;
-import com.google.android.gms.maps.model.LatLng;
 
 
 /**
@@ -28,34 +22,21 @@ import com.google.android.gms.maps.model.LatLng;
 public class NewReminder extends Activity {
     Fragment timeFragment = new TimeFragment();
     Fragment mapFragment = new LocationFragment();
-    protected DatabaseHelper dataCarrier;
     protected ContentValues dataFiller;
     protected EditText titleCarrier, memoCarrier;
-    protected Fragment fillFrame, other;
-    private MapView map;
-    private FragmentTransaction fragTransaction;
-    double latitude;
-    double longitude;
-    String Address1;
-    String Address2;
-    String State;
-    String zipcode;
-    String Country;
     CircleOptions circle;
-    LatLng center;
-    private double radius;
-    private Fragment mapFrag;
-    private MapHelper mapView = null;
     private PendingIntent pendingIntent;
     private AlarmManager manager;
     private Intent alarmIntent;
+    private int idDB;
+    Context ctx = this;
 
 
     /////////////////////////////////// added by michael //////////////////////////////////////////
-    private long rowID;
-    int year,day,month;
     //SQLiteCursor cursor;
     Cursor cursor;
+    private MapHelper mapView;
+    private long rowID = 0;
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -64,21 +45,38 @@ public class NewReminder extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.reminder_new);
 
-        fillFrame = new TimeFragment();
-        FragmentTransaction fragTransaction = getFragmentManager().beginTransaction();
-        fragTransaction.replace(R.id.main_frag, fillFrame);
-        fragTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        fragTransaction.addToBackStack(null);
-        fragTransaction.commit();
-
 
         circle = new CircleOptions();
         mapView = new MapHelper();
         // setUpMapIfNeeded();
 
+        //getting id from intent
+        rowID = this.getIntent().getLongExtra("idNumber", 0);
+
         // Retrieve a PendingIntent that will perform a broadcast
         alarmIntent = new Intent(this, AlarmHandler.class);
+        alarmIntent.putExtra("idNumber", rowID);
         pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
+
+        titleCarrier = (EditText) findViewById(R.id.titleBox);
+        memoCarrier = (EditText) findViewById(R.id.memoBox);
+
+
+
+//        fillDisplay(rowID);
+    }
+
+    public void fillDisplay(long id)
+    {
+        if(id >0) {
+            //calling specific row
+            Cursor constantsCursor = DatabaseHelper.getInstance(ctx).editReminders(id);
+
+            titleCarrier.setText(constantsCursor.getString(constantsCursor.getColumnIndex(DatabaseHelper.TITLE)));
+            memoCarrier.setText(constantsCursor.getString(constantsCursor.getColumnIndex(DatabaseHelper.MESSAGE)));
+
+            constantsCursor.close();
+        }
     }
 
     //method to handle fragment selected: time or location (default time)
@@ -146,8 +144,7 @@ public class NewReminder extends Activity {
 
     public void settingAlarm()
     {
-        alarmIntent.putExtra("dataID", DatabaseHelper.ID);
-
+        //passing info for notification
         manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         int interval = 10000;
 
@@ -156,13 +153,14 @@ public class NewReminder extends Activity {
     }
 
 
+
     ////////////////////////////// Code by Michael ///////////////////////////////////
-    public void populateReminder(){
+    /*public void populateReminder(){
 
         //Toast.makeText(this, "Editing mode!", Toast.LENGTH_LONG).show();
 
         long dataBaseID = getIntent().getLongExtra("idNumber", rowID);
-        cursor = DatabaseHelper.getInstance(this).editRemiders(16);
+        cursor = DatabaseHelper.getInstance(this).editReminders(16);
         //getRowData(dataBaseID);
 
         EditText editMemo = (EditText)findViewById(R.id.memoBox);
@@ -171,39 +169,7 @@ public class NewReminder extends Activity {
         EditText editTitle = (EditText) findViewById(R.id.titleBox);
         editTitle.setText(cursor.getString(1));
 
-        DatePicker editDate = (DatePicker)findViewById(R.id.dateRemember);
-        //editDate.init(year, month, day, null);
-        //editDate.updateDate(2014, 12, 10);
-
-
-        TimePicker editTIme = (TimePicker)findViewById(R.id.timeRemeber);
-        //editTIme.setCurrentHour(1);
-          //editTIme.setCurrentMinute(25);
-
-       }
-
-       public void getRowData(long id){
-
-           /*SQLiteDatabase db = dataCarrier.getReadableDatabase();
-
-
-
-           //Integer.parseInt(cursor.getString(0));
-
-
-
-         /* dataCarrier = new DatabaseHelper(this, DatabaseHelper.TABLE, null, 1);
-
-           cursor = (SQLiteCursor) dataCarrier.getReadableDatabase().rawQuery("SELECT " + DatabaseHelper.ID + ", "
-                   + DatabaseHelper.TITLE + ", " + DatabaseHelper.MESSAGE + ", "
-                   + DatabaseHelper.DATE + ", " + DatabaseHelper.TIME + ", "
-                   + DatabaseHelper.XCOORDS + ", " + DatabaseHelper.YCOORDS + ", " + DatabaseHelper.RADIUS +
-                   " FROM " + DatabaseHelper.TABLE + " ORDER BY " + DatabaseHelper.DATE, null);
-           if (cursor != null) {
-
-               cursor.moveToFirst();
-           }*/
-       }
+       }*/
     ////////////////////////////////////////////////////////////////////////////////////////////
 
 }

@@ -9,7 +9,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteCursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
@@ -89,14 +88,16 @@ public class DatabaseHelper extends SQLiteOpenHelper
         return cursor;
     }
 
-    public Cursor editRemiders(long id){
-        cursor = db.query(DatabaseHelper.TABLE, new String[]{DatabaseHelper.ID,
+    public Cursor editReminders(long id){
+        cursor = this.getWritableDatabase().query(DatabaseHelper.TABLE, new String[]{DatabaseHelper.ID,
                         DatabaseHelper.TITLE, DatabaseHelper.MESSAGE, DatabaseHelper.DATE,
                         DatabaseHelper.TIME, DatabaseHelper.XCOORDS, DatabaseHelper.YCOORDS,
                         DatabaseHelper.RADIUS}, DatabaseHelper.ID + "=?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
        return cursor;
     }
+
+
     public List<String> loadTitlesForNotification(String ids[]) {
         List<String> lstIds = new ArrayList<String>();
         StringBuffer buffer = new StringBuffer();

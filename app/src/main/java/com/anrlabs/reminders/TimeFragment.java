@@ -72,7 +72,7 @@ public class TimeFragment extends Fragment{
                         int monthOfYear,
                         int dayOfMonth) {
                     yearDB = year;
-                    monthDb = monthOfYear;
+                    monthDb = monthOfYear + 1;
                     dayDB = dayOfMonth;
                 }
             };
@@ -115,9 +115,10 @@ public class TimeFragment extends Fragment{
 
     public static long timeAlarmMillis()
     {
-        today.set(yearDB, monthDb, dayDB, hoursDB, minDB);
+        Calendar moment = Calendar.getInstance();
+        moment.set(yearDB, monthDb, dayDB, hoursDB, minDB);
 
         //machine milliseconds * Milliseconds * seconds * min * hour * day * month * year
-        return (System.currentTimeMillis() + today.getTimeInMillis());
+        return (System.currentTimeMillis() + moment.getTimeInMillis());
     }
 }

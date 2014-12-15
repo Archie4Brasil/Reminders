@@ -26,7 +26,16 @@
         <activity
             android:name="com.anrlabs.reminders.NewReminder"
             android:label="New Reminder" >
+            <intent-filter>
+                <action android:name="android.intent.action.ASSIST" />
+            </intent-filter>
         </activity>
+
+        <receiver android:name=".AlarmHandler">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".NewReminder" />
+        </receiver>
 
         <receiver
             android:name="com.anrlabs.locationreminder.GeoFenceReceiver"

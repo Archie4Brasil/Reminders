@@ -24,6 +24,7 @@ public class MainActivity extends Activity {
     DatabaseHelper db;
     SimpleCursorAdapter myCursorAdapter;
     protected ListView myListView;
+    protected TextView textView;
 
     private static DatabaseHelper sInstance;
 
@@ -42,11 +43,10 @@ public class MainActivity extends Activity {
        myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
            @Override
            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-               TextView pos = (TextView)view.findViewById(R.id.id);
-               String index = pos.getText().toString();
+           TextView pos = (TextView)view.findViewById(R.id.id);
+           String index = pos.getText().toString();
 
-               editItemInListDialog(index);
-
+           editItemInListDialog(index);
            }
        });
 
@@ -62,28 +62,18 @@ public class MainActivity extends Activity {
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
                                            int position, long arg3) {
 
-             TextView pos = (TextView)arg1.findViewById(R.id.id);
-                String index = pos.getText().toString();
+            TextView pos = (TextView)arg1.findViewById(R.id.id);
+            String index = pos.getText().toString();
 
-                deleteItemFromList(index);
+            deleteItemFromList(index);
 
-                return true;
+            return true;
             }
         });
 
 
 
 
-       /* ContentValues cv = new ContentValues();
-
-        cv.put(DatabaseHelper.TITLE, "Call Kat");
-        cv.put(DatabaseHelper.MESSAGE, "She wants to go to the theater");
-        cv.put(DatabaseHelper.DATE, "12/23/14");
-        cv.put(DatabaseHelper.TIME, "6:00 P.M.");
-        cv.put(DatabaseHelper.XCOORDS, "34.865788");
-        cv.put(DatabaseHelper.YCOORDS, "-45.82319");
-        cv.put(DatabaseHelper.RADIUS, "10");
-        db.insert(cv);*/
     }
 
     @Override
@@ -100,15 +90,9 @@ public class MainActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
         switch (item.getItemId()) {
-            case R.id.action_settings:
-                return true;
-            case R.id.add_reminder:
+             case R.id.add_reminder:
                 startActivity(intent);
                 return true;
             default:
@@ -132,6 +116,8 @@ public class MainActivity extends Activity {
         myListView.setAdapter(myCursorAdapter);
 
     }
+
+
     public void editItemInListDialog(String position){
         final long editMessage = Long.parseLong(position);
 
@@ -144,10 +130,8 @@ public class MainActivity extends Activity {
         alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
                 intent.putExtra("idNumber", editMessage);
                 startActivity(intent);
-
                 //populateListView();
             }
 
@@ -156,13 +140,11 @@ public class MainActivity extends Activity {
         alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
                 dialog.dismiss();
             }
         });
 
         alert.show();
-
     }
 
     public void deleteItemFromList(String position) {
