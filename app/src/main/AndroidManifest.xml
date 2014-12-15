@@ -19,14 +19,22 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name="com.anrlabs.reminders.NewReminder"
             android:label="New Reminder" >
+            <intent-filter>
+                <action android:name="android.intent.action.RUN" />
+            </intent-filter>
         </activity>
+
+        <receiver android:name=".AlarmHandler">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".NewReminder" />
+        </receiver>
 
         <receiver
             android:name="com.anrlabs.locationreminder.GeoFenceReceiver"

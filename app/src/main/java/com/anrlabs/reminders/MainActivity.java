@@ -35,6 +35,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         intent = new Intent(this, NewReminder.class);
+
         populateListView();
 
 
@@ -53,19 +54,48 @@ public class MainActivity extends Activity {
            }
        });
 
-      myListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        ////////////////////////////////////////////////////////////////////////////////////
+
+
+
+        ////////////////////// long click Listener for ListView ///////////////////////////////////
+
+        myListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             // setting onItemLongClickListener and passing the position to the function
             @Override
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
                                            int position, long arg3) {
+            boolean deleteLocation= true;
+            TextView pos = (TextView)arg1.findViewById(R.id.id);
+            String index = pos.getText().toString();
 
              TextView pos = (TextView)arg1.findViewById(R.id.id);
              String index = pos.getText().toString();
              deleteItemFromList(index);
              return true;
+            if (((TextView)arg1.findViewById(R.id.locationName)).getText().equals(""))
+            {
+                deleteLocation = false;
+            }
+            deleteItemFromList(index,deleteLocation);
+
+            return true;
             }
         });
 
+
+
+
+       /* ContentValues cv = new ContentValues();
+
+        cv.put(DatabaseHelper.TITLE, "Call Kat");
+        cv.put(DatabaseHelper.MESSAGE, "She wants to go to the theater");
+        cv.put(DatabaseHelper.DATE, "12/23/14");
+        cv.put(DatabaseHelper.TIME, "6:00 P.M.");
+        cv.put(DatabaseHelper.XCOORDS, "34.865788");
+        cv.put(DatabaseHelper.YCOORDS, "-45.82319");
+        cv.put(DatabaseHelper.RADIUS, "10");
+        db.insert(cv);*/
     }
 
     @Override
@@ -99,7 +129,11 @@ public class MainActivity extends Activity {
     }
 
     public void populateListView() {
+
+
         Cursor cursor = DatabaseHelper.getInstance(this).loadReminders();
+
+
         myCursorAdapter = new SimpleCursorAdapter(this, R.layout.row,
                 cursor, new String[]{DatabaseHelper.ID, DatabaseHelper.TITLE,
                 DatabaseHelper.DATE, DatabaseHelper.TIME,DatabaseHelper.LOCATION_NAME},
@@ -111,7 +145,7 @@ public class MainActivity extends Activity {
     }
 
 
-    public void deleteItemFromList(String position) {
+    public void deleteItemFromList(String position, final boolean deleteLocation) {
 
         final Long removeMessage = Long.parseLong(position);
         AlertDialog.Builder alert = new AlertDialog.Builder(
@@ -124,8 +158,10 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 DatabaseHelper.getInstance(ctx).deleteData(removeMessage);
-                geoFenceMain = new GeoFenceMain();
-                geoFenceMain.removeGeoFence(getApplicationContext(),removeMessage.toString());
+                if (deleteLocation) {
+                    geoFenceMain = new GeoFenceMain();
+                    geoFenceMain.removeGeoFence(getParent(), removeMessage.toString());
+                }
                 populateListView();
             }
 

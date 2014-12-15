@@ -18,36 +18,45 @@ public class TimeFragment extends Fragment{
     static TimePicker timePicked;
     static DatePicker datePicked;
     static int hoursDB, minDB, yearDB, monthDb, dayDB;
-    View fragTrasnport;
-    private static Calendar today;
+    static String morningEvening;
+    View fragTransports;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        fragTrasnport = inflater.inflate(R.layout.time_fragment, container, false);
+        fragTransports = inflater.inflate(R.layout.time_fragment, container, false);
 
-        timePicked = (TimePicker) fragTrasnport.findViewById(R.id.timeRemeber);
-        timePicked.setIs24HourView(true);
+        timePicked = (TimePicker) fragTransports.findViewById(R.id.timeRemeber);
+        timePicked.setIs24HourView(false);
         timePicked.setOnTimeChangedListener(OnTimeChanged);
 
         Calendar today = Calendar.getInstance();
-        datePicked = (DatePicker) fragTrasnport.findViewById(R.id.dateRemember);
+        datePicked = (DatePicker) fragTransports.findViewById(R.id.dateRemember);
         datePicked.init(today.get(Calendar.YEAR), today.get(Calendar.MONTH),
                     today.get(Calendar.DAY_OF_MONTH), onDateChanged);
 
-        /*saveState = new Bundle();
+        yearDB = datePicked.getYear();
+        monthDb = datePicked.getMonth() + 1;
+        dayDB = datePicked.getDayOfMonth();
+        onTimeSet(timePicked, timePicked.getCurrentHour(), timePicked.getCurrentMinute());
 
-        onResume();
+        return fragTransports;
+    }
 
-        if (saveState != null)
-        {
-            hoursDB = saveState.getInt("timeHour");
-            minDB = saveState.getInt("timeMin");
+    public static void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 
-            timePicked.setCurrentHour(hoursDB);
-            timePicked.setCurrentMinute(minDB);
-        }*/
+        Calendar datetime = Calendar.getInstance();
+        datetime.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        datetime.set(Calendar.MINUTE, minute);
 
-        return fragTrasnport;
+        if (datetime.get(Calendar.AM_PM) == Calendar.AM)
+            morningEvening = "AM";
+        else if (datetime.get(Calendar.AM_PM) == Calendar.PM)
+            morningEvening = "PM";
+
+        hoursDB = hourOfDay - 12;
+        minDB = minute;
+
+
     }
 
     TimePicker.OnTimeChangedListener OnTimeChanged =
@@ -71,7 +80,7 @@ public class TimeFragment extends Fragment{
                         int monthOfYear,
                         int dayOfMonth) {
                     yearDB = year;
-                    monthDb = monthOfYear;
+                    monthDb = monthOfYear + 1;
                     dayDB = dayOfMonth;
                 }
             };
@@ -97,7 +106,31 @@ public class TimeFragment extends Fragment{
 
     public static String passTime()
     {
-        return hoursDB + ":" + minDB;
+        String min, hour;
+
+        if(minDB<10)
+        {
+            min = "0" + minDB;
+        }
+        else
+        {
+            min = Integer.toString(minDB);
+        }
+
+        if(hoursDB<10)
+        {
+            hour = "0" + hoursDB;
+        }
+        else if(hoursDB>12)
+        {
+            hour = Integer.toString(hoursDB - 12);
+        }
+        else
+        {
+            hour = Integer.toString(hoursDB);
+        }
+
+        return hour + ":" + min + " " + morningEvening;
     }
 
     public static String passDate()
@@ -114,9 +147,14 @@ public class TimeFragment extends Fragment{
 
     public static long timeAlarmMillis()
     {
-        today.set(yearDB, monthDb, dayDB, hoursDB, minDB);
+        Calendar moment = Calendar.getInstance();
+        moment.set(yearDB, monthDb, dayDB, hoursDB, minDB);
 
-        //machine milliseconds * Milliseconds * seconds * min * hour * day * month * year
-        return (System.currentTimeMillis() + today.getTimeInMillis());
+        if(System.currentTimeMillis() <= moment.getTimeInMillis()) {
+            //machine milliseconds * Milliseconds * secon4ds * min * hour * day * month * year
+            return (moment.getTimeInMillis());
+        }
+        else
+            return System.currentTimeMillis();
     }
 }

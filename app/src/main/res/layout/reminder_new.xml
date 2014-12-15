@@ -111,8 +111,10 @@
             android:layout_weight="0"
             android:layout_gravity="center"
             android:onClick="saveData"/>
-    </LinearLayout>
 
+
+
+    </LinearLayout>
 
 
 

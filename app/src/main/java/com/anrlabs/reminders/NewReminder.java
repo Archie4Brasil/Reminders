@@ -37,17 +37,11 @@ public class NewReminder extends Activity {
     protected DatabaseHelper dataCarrier;
     protected ContentValues dataFiller;
     protected EditText titleCarrier, memoCarrier;
-    protected Fragment fillFrame, other;
-    private MapView map;
-    private FragmentTransaction fragTransaction;
-
-
-
-    private Fragment mapFrag;
-
+    private int tabSelected=0;
     private PendingIntent pendingIntent;
     private AlarmManager manager;
     private Intent alarmIntent;
+    Context ctx = this;
 
 
     /////////////////////////////////// added by michael //////////////////////////////////////////
@@ -77,11 +71,25 @@ public class NewReminder extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.reminder_new);
 
+        titleCarrier = (EditText) findViewById(R.id.titleBox);
+        memoCarrier = (EditText) findViewById(R.id.memoBox);
 
 
-        // Retrieve a PendingIntent that will perform a broadcast
-        alarmIntent = new Intent(this, AlarmHandler.class);
-        pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
+
+//        fillDisplay(rowID);
+    }
+
+    public void fillDisplay(long id)
+    {
+        if(id >0) {
+            //calling specific row
+            Cursor constantsCursor = DatabaseHelper.getInstance(ctx).editReminders(id);
+
+            titleCarrier.setText(constantsCursor.getString(constantsCursor.getColumnIndex(DatabaseHelper.TITLE)));
+            memoCarrier.setText(constantsCursor.getString(constantsCursor.getColumnIndex(DatabaseHelper.MESSAGE)));
+
+            constantsCursor.close();
+        }
     }
 
     //method to handle fragment selected: time or location (default time)
@@ -89,6 +97,7 @@ public class NewReminder extends Activity {
     // public void selectFrag(View v)
     {
         if (fragSelected.getId() == R.id.buttonLocationFrag) {
+            tabSelected = 1;
             if (getFragmentManager().findFragmentByTag("map") != null) {
                 if (getFragmentManager().findFragmentByTag("map").isAdded())
                 {
@@ -106,6 +115,7 @@ public class NewReminder extends Activity {
 
          } else
         if (fragSelected.getId() == R.id.buttonTimeFrag) {
+            tabSelected = 2;
             if (getFragmentManager().findFragmentByTag("time") != null ) {
                 if (getFragmentManager().findFragmentByTag("time").isAdded())
                 {
@@ -126,7 +136,7 @@ public class NewReminder extends Activity {
     public void saveData(View v)
     {
         savingData();
-       // settingAlarm();
+        settingAlarm();
 
         super.onBackPressed();
     }
@@ -134,10 +144,6 @@ public class NewReminder extends Activity {
     //populating DataBase
     public void savingData()
     {
-       // Bundle mapBundle = mapFragment.getArguments();
-        //String lat = mapBundle.getString("lat");
-        //String longitude=  mapBundle.getString("long");
-
         titleCarrier = (EditText) findViewById(R.id.titleBox);
         memoCarrier = (EditText) findViewById(R.id.memoBox);
 
@@ -152,27 +158,51 @@ public class NewReminder extends Activity {
         dataFiller.put(DatabaseHelper.RADIUS,radius.toString());
         dataFiller.put(DatabaseHelper.LOCATION_NAME,location_name);
 
-        Long id = DatabaseHelper.getInstance(this).addData(dataFiller);
+        switch (tabSelected)
+        {
+            case 1:
+                dataFiller.put(DatabaseHelper.XCOORDS,latitude.toString());
+                dataFiller.put(DatabaseHelper.YCOORDS,longitude.toString());
+                dataFiller.put(DatabaseHelper.RADIUS,radius.toString());
+                dataFiller.put(DatabaseHelper.RADIUS,radius.toString());
+                dataFiller.put(DatabaseHelper.LOCATION_NAME,location_name);
 
         GeoFenceMain gm = new GeoFenceMain();
         gm.addGeoFence(getApplicationContext(),id.toString(),latitude,longitude,1000);
+                Long id = DatabaseHelper.getInstance(this).addData(dataFiller);
+
+                GeoFenceMain gm = new GeoFenceMain();
+                gm.addGeoFence(this,id.toString(),latitude,longitude,1000);
+                break;
+            case 2:
+                dataFiller.put(DatabaseHelper.TIME, TimeFragment.passTime());
+                dataFiller.put(DatabaseHelper.DATE, TimeFragment.passDate());
+
+                rowID = DatabaseHelper.getInstance(this).addData(dataFiller);
+                break;
+        }
+
+
+
 
     }
 
     public void settingAlarm()
     {
-        alarmIntent.putExtra("dataID", DatabaseHelper.ID);
-
         manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-        int interval = 10000;
 
-        manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, TimeFragment.timeAlarmMillis(), 0, pendingIntent);
+        // Retrieve a PendingIntent that will perform a broadcast
+        alarmIntent = new Intent(this, AlarmHandler.class);
+        alarmIntent.putExtra("idNumber", rowID);
+        pendingIntent = PendingIntent.getBroadcast(this, (int)rowID, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        manager.setRepeating(AlarmManager.RTC_WAKEUP, TimeFragment.timeAlarmMillis(), 0, pendingIntent);
         Toast.makeText(this, "Alarm Set", Toast.LENGTH_SHORT).show();
     }
 
 
     ////////////////////////////// Code by Michael ///////////////////////////////////
-    public void populateReminder(){
+    /*public void populateReminder(){
 
         //Toast.makeText(this, "Editing mode!", Toast.LENGTH_LONG).show();
 

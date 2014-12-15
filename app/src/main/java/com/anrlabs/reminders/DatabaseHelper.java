@@ -9,7 +9,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteCursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
@@ -86,16 +85,16 @@ public class DatabaseHelper extends SQLiteOpenHelper
                 + DatabaseHelper.TITLE + ", " + DatabaseHelper.MESSAGE + ", "
                 + DatabaseHelper.DATE + ", " + DatabaseHelper.TIME + ", "
                 + DatabaseHelper.XCOORDS + ", " + DatabaseHelper.YCOORDS + ", " + DatabaseHelper.RADIUS +
-                ", " + LOCATION_NAME +
+                ", " + DatabaseHelper.LOCATION_NAME +
                 " FROM " + DatabaseHelper.TABLE + " ORDER BY " + DatabaseHelper.DATE, null);
         return cursor;
     }
 
-    public Cursor loadRemiderDetails(long id){
-        cursor = this.getReadableDatabase().query(DatabaseHelper.TABLE, new String[]{DatabaseHelper.ID,
+    public Cursor editReminders(long id){
+        cursor = this.getWritableDatabase().query(DatabaseHelper.TABLE, new String[]{DatabaseHelper.ID,
                         DatabaseHelper.TITLE, DatabaseHelper.MESSAGE, DatabaseHelper.DATE,
                         DatabaseHelper.TIME, DatabaseHelper.XCOORDS, DatabaseHelper.YCOORDS,
-                        DatabaseHelper.RADIUS,DatabaseHelper.LOCATION_NAME}, DatabaseHelper.ID + "=?",
+                        DatabaseHelper.RADIUS}, DatabaseHelper.ID + "=?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
        return cursor;
     }
