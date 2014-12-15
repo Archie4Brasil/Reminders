@@ -1,5 +1,6 @@
 package com.anrlabs.locationreminder;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -14,6 +15,7 @@ import android.text.TextUtils;
 import com.anrlabs.reminders.DatabaseHelper;
 import com.anrlabs.reminders.MainActivity;
 import com.anrlabs.reminders.R;
+import com.anrlabs.reminders.ShowReminder;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient;
@@ -26,7 +28,7 @@ import java.util.List;
  */
 public class GeoFenceReceiver extends BroadcastReceiver {
     Context context;
-
+    String[] strinIds;
     Intent broadcastIntent = new Intent();
 
     @Override
@@ -48,15 +50,15 @@ public class GeoFenceReceiver extends BroadcastReceiver {
             // Post a notification
             List<Geofence> geofences = LocationClient
                     .getTriggeringGeofences(intent);
-            String[] ids = new String[geofences.size()];
+            strinIds = new String[geofences.size()];
             int index=0;
            for (Geofence geofence : geofences) {
 
-               ids[index]= geofence.getRequestId();
+               strinIds[index]= geofence.getRequestId();
 
            }
             index=0;
-            List<String> lst = DatabaseHelper.getInstance(this.context).loadTitlesForNotification(ids);
+            List<String> lst = DatabaseHelper.getInstance(this.context).loadTitlesForNotification(strinIds);
            for (String  str :lst) {
                sendNotification((String)lst.get(index));
            }
@@ -65,14 +67,47 @@ public class GeoFenceReceiver extends BroadcastReceiver {
          }
     }
 
+
+    private void sendNotificationNew(String title) {
+        String ns = Context.NOTIFICATION_SERVICE;
+        NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(ns);
+        int icon = R.drawable.ic_launcher;
+        CharSequence tickerText = "New Notification";
+        long when = System.currentTimeMillis();
+
+        Notification notification = new Notification(icon, tickerText, when);
+        notification.defaults |= Notification.DEFAULT_VIBRATE;
+        long[] vibrate = {0,100,200,200,200,200};
+        notification.vibrate = vibrate;
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+
+        CharSequence contentTitle = "Title";
+        CharSequence contentText = "Text";
+        Intent notificationIntent = new Intent(context, ShowReminder.class);
+        notificationIntent.putExtra("myId", 4);
+        notificationIntent.putExtra("name", "Sandeep");
+        int iUniqueId = (int) (System.currentTimeMillis() & 0xfffffff);
+        PendingIntent contentIntent = PendingIntent.getActivity(context, iUniqueId, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
+
+        int mynotification_id = 1;
+
+        mNotificationManager.notify(mynotification_id, notification);
+    }
     private void sendNotification(String title) {
 
-        Intent notificationIntent = new Intent(context, MainActivity.class);
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-        stackBuilder.addParentStack(MainActivity.class);
+        Intent notificationIntent = new Intent(context, ShowReminder.class);
+        notificationIntent.putExtra("notificationId",strinIds[0]);
+       /* TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        stackBuilder.addParentStack(ShowReminder.class);
         stackBuilder.addNextIntent(notificationIntent);
         PendingIntent notificationPendingIntent = stackBuilder
-                .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+                .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);*/
+
+        int iUniqueId = (int) (System.currentTimeMillis() & 0xfffffff);
+        PendingIntent notificationPendingIntent = PendingIntent.getActivity(context, iUniqueId, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(
                 context);
         builder.setSmallIcon(R.drawable.ic_launcher)

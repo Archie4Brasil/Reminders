@@ -98,8 +98,6 @@ public class DatabaseHelper extends SQLiteOpenHelper
                 new String[] { String.valueOf(id) }, null, null, null, null);
        return cursor;
     }
-
-
     public List<String> loadTitlesForNotification(String ids[]) {
         List<String> lstIds = new ArrayList<String>();
         StringBuffer buffer = new StringBuffer();

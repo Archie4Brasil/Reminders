@@ -190,7 +190,7 @@ public class NewReminder extends Activity {
         //Toast.makeText(this, "Editing mode!", Toast.LENGTH_LONG).show();
 
         long dataBaseID = getIntent().getLongExtra("idNumber", rowID);
-        cursor = DatabaseHelper.getInstance(this).editRemiders(16);
+        cursor = DatabaseHelper.getInstance(this).loadRemiderDetails(16);
         //getRowData(dataBaseID);
 
         EditText editMemo = (EditText)findViewById(R.id.memoBox);
