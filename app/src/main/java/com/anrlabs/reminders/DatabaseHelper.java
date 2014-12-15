@@ -13,8 +13,7 @@ import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 
 
-public class DatabaseHelper extends SQLiteOpenHelper
-{
+public class DatabaseHelper extends SQLiteOpenHelper {
     static final String ID = "_id";
     static final String TITLE = "title";
     static final String MESSAGE = "message";
@@ -39,16 +38,28 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE " + TABLE + " ("+ID +" INTEGER PRIMARY KEY AUTOINCREMENT, " + TITLE +
-                " TEXT, "+ MESSAGE + " TEXT, " + DATE + " TEXT, "+ TIME + " TEXT, " + XCOORDS +
+        db.execSQL("CREATE TABLE " + TABLE + " (" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + TITLE +
+                " TEXT, " + MESSAGE + " TEXT, " + DATE + " TEXT, " + TIME + " TEXT, " + XCOORDS +
                 " TEXT, " + YCOORDS + " TEXT, " + RADIUS + " TEXT);");
     }
 
+    public static DatabaseHelper getInstance(Context context) {
 
-    public void addData(ContentValues cv){
+        // Use the application context, which will ensure that you
+        // don't accidentally leak an Activity's context.
+        if (sInstance == null) {
+            sInstance = new DatabaseHelper(context.getApplicationContext());
+        }
+        return sInstance;
+    }
+
+    public void addData(ContentValues cv) {
         db = this.getWritableDatabase();
 
         db.insert(TABLE, TITLE, cv);
+
+        db.close();
+
     }
 
     @Override
@@ -62,37 +73,30 @@ public class DatabaseHelper extends SQLiteOpenHelper
         this.getWritableDatabase().insert(TABLE, TITLE, cv);
     }
 
-    public void deleteData(long dataItem){
+
+    public void deleteData(long dataItem) {
         this.getWritableDatabase().delete(TABLE, "_id = " + dataItem, null);
     }
 
-    public static DatabaseHelper getInstance(Context context) {
-
-        // Use the application context, which will ensure that you
-        // don't accidentally leak an Activity's context.
-        // See this article for more information: http://bit.ly/6LRzfx
-        if (sInstance == null) {
-            sInstance = new DatabaseHelper(context.getApplicationContext());
-        }
-        return sInstance;
-    }
-
-    public Cursor loadReminders(){
+    public Cursor loadReminders() {
         cursor = (SQLiteCursor) this.getReadableDatabase().rawQuery("SELECT " + DatabaseHelper.ID + ", "
                 + DatabaseHelper.TITLE + ", " + DatabaseHelper.MESSAGE + ", "
                 + DatabaseHelper.DATE + ", " + DatabaseHelper.TIME + ", "
                 + DatabaseHelper.XCOORDS + ", " + DatabaseHelper.YCOORDS + ", " + DatabaseHelper.RADIUS +
-                " FROM " + DatabaseHelper.TABLE + " ORDER BY " + DatabaseHelper.DATE, null);
+                " FROM " + DatabaseHelper.TABLE + " ORDER BY " + DatabaseHelper.ID  + " DESC ", null);
         return cursor;
+
     }
 
-    public Cursor editRemiders(long id){
-        cursor = db.query(DatabaseHelper.TABLE, new String[]{DatabaseHelper.ID,
-                        DatabaseHelper.TITLE, DatabaseHelper.MESSAGE, DatabaseHelper.DATE,
-                        DatabaseHelper.TIME, DatabaseHelper.XCOORDS, DatabaseHelper.YCOORDS,
-                        DatabaseHelper.RADIUS}, DatabaseHelper.ID + "=?",
-                new String[] { String.valueOf(id) }, null, null, null, null);
-       return cursor;
-    }
-
+     public  Cursor editReminders(long id) {
+            SQLiteDatabase db = this.getReadableDatabase();
+         if( cursor != null) {
+             cursor = db.query(DatabaseHelper.TABLE, new String[]{DatabaseHelper.ID,
+                DatabaseHelper.TITLE, DatabaseHelper.MESSAGE, DatabaseHelper.DATE,
+                DatabaseHelper.TIME, DatabaseHelper.XCOORDS, DatabaseHelper.YCOORDS,
+                DatabaseHelper.RADIUS}, DatabaseHelper.ID + "=?", new String[]{String.valueOf(id)},
+                null,null,null);
+         }
+         return cursor;
+     }
 }

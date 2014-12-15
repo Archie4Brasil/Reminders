@@ -28,14 +28,15 @@ import java.util.List;
 import static android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class MainActivity extends Activity {
-    Context ctx= this;
 
+    Context ctx= this;
     Intent intent;
     SQLiteCursor cursor;
     DatabaseHelper db;
+
     ListView listView;
     SimpleCursorAdapter myCursorAdapter;
-
+    boolean populateEditScreenFlag;
     private static DatabaseHelper sInstance;
 
     @Override
@@ -45,41 +46,10 @@ public class MainActivity extends Activity {
         intent = new Intent(this, NewReminder.class);
 
         populateListView();
-
+        populateEditScreenFlag = false;
         listView = (ListView) findViewById(R.id.listViewMain);
 
-
-
-        ContentValues cv = new ContentValues();
-
-        cv.put(DatabaseHelper.TITLE, "Call Kat");
-        cv.put(DatabaseHelper.MESSAGE, "She wants to go to the theater");
-        cv.put(DatabaseHelper.DATE, "12/23/14");
-        cv.put(DatabaseHelper.TIME, "6:00 P.M.");
-        cv.put(DatabaseHelper.XCOORDS, "34.865788");
-        cv.put(DatabaseHelper.YCOORDS, "-45.82319");
-        cv.put(DatabaseHelper.RADIUS, "10");
-        DatabaseHelper.getInstance(this).insert(cv);
-
-
-       /////////////////////// on Click listener for ListView (short click)////////////////////////
-
-       listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-           @Override
-           public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-               TextView pos = (TextView)view.findViewById(R.id.id);
-               String index = pos.getText().toString();
-
-               editItemInListDialog(index);
-
-           }
-       });
-
-        ////////////////////////////////////////////////////////////////////////////////////
-
-
-
-        ////////////////////// long click Listener for ListView ///////////////////////////////////
+        /////////////////////// long click (brings up delete dialog box ///////////////////////////
 
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             // setting onItemLongClickListener and passing the position to the function
@@ -90,25 +60,11 @@ public class MainActivity extends Activity {
              TextView pos = (TextView)arg1.findViewById(R.id.id);
                 String index = pos.getText().toString();
 
-                deleteItemFromList(index);
+                deleteItemFromListDialog(index);
 
                 return true;
             }
         });
-
-
-
-
-       /* ContentValues cv = new ContentValues();
-
-        cv.put(DatabaseHelper.TITLE, "Call Kat");
-        cv.put(DatabaseHelper.MESSAGE, "She wants to go to the theater");
-        cv.put(DatabaseHelper.DATE, "12/23/14");
-        cv.put(DatabaseHelper.TIME, "6:00 P.M.");
-        cv.put(DatabaseHelper.XCOORDS, "34.865788");
-        cv.put(DatabaseHelper.YCOORDS, "-45.82319");
-        cv.put(DatabaseHelper.RADIUS, "10");
-        db.insert(cv);*/
     }
 
     @Override
@@ -116,6 +72,12 @@ public class MainActivity extends Activity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    @Override
+    protected void onResume() {
+        populateListView();
+        super.onResume();
     }
 
     @Override
@@ -129,7 +91,7 @@ public class MainActivity extends Activity {
         if (id == R.id.action_settings) {
             return true;
         }
-
+        //action bar options
         switch (item.getItemId()) {
             case R.id.action_settings:
                 return true;
@@ -141,11 +103,10 @@ public class MainActivity extends Activity {
         }
     }
 
+    //populate list view with database values
     public void populateListView() {
 
-
         Cursor cursor = DatabaseHelper.getInstance(this).loadReminders();
-
 
         myCursorAdapter = new SimpleCursorAdapter(this, R.layout.row,
                 cursor, new String[]{DatabaseHelper.ID, DatabaseHelper.TITLE, DatabaseHelper.MESSAGE,
@@ -155,46 +116,14 @@ public class MainActivity extends Activity {
 
         ListView myListView = (ListView) findViewById(R.id.listViewMain);
         myListView.setAdapter(myCursorAdapter);
-
-    }
-    public void editItemInListDialog(String position){
-        final long editMessage = Long.parseLong(position);
-
-        AlertDialog.Builder alert = new AlertDialog.Builder(
-                MainActivity.this);
-
-        alert.setTitle("Edit");
-        alert.setMessage("Do you want edit this reminder?");
-
-        alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                intent.putExtra("idNumber", editMessage);
-                startActivity(intent);
-
-                //populateListView();
-            }
-
-        });
-
-        alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                dialog.dismiss();
-            }
-        });
-
-        alert.show();
-
     }
 
-    public void deleteItemFromList(String position) {
+    //dialog box for deleting
+    public void deleteItemFromListDialog(String position) {
 
         final long removeMessage = Long.parseLong(position);
         AlertDialog.Builder alert = new AlertDialog.Builder(
-                MainActivity.this);
+                                    MainActivity.this);
 
         alert.setTitle("Delete");
         alert.setMessage("Do you want delete this message?");
@@ -202,14 +131,14 @@ public class MainActivity extends Activity {
         alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                DatabaseHelper.getInstance(ctx).deleteData(removeMessage);
 
+                DatabaseHelper.getInstance(ctx).deleteData(removeMessage);
+                DatabaseHelper.getInstance(ctx).close();
                 populateListView();
+                displayToast();
             }
 
         });
-
-
         alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -217,10 +146,12 @@ public class MainActivity extends Activity {
                 dialog.dismiss();
             }
         });
-
         alert.show();
+    }
 
-
+    //message prompt to verify message was deleted
+    public void displayToast(){
+        Toast.makeText(this, "Message Deleted", Toast.LENGTH_SHORT).show();
     }
 
 }
