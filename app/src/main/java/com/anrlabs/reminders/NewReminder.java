@@ -63,10 +63,6 @@ public class NewReminder extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.reminder_new);
 
-
-        // Retrieve a PendingIntent that will perform a broadcast
-        alarmIntent = new Intent(this, AlarmHandler.class);
-
         titleCarrier = (EditText) findViewById(R.id.titleBox);
         memoCarrier = (EditText) findViewById(R.id.memoBox);
 
@@ -178,11 +174,12 @@ public class NewReminder extends Activity {
     {
         manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
 
-        alarmIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        // Retrieve a PendingIntent that will perform a broadcast
+        alarmIntent = new Intent(this, AlarmHandler.class);
         alarmIntent.putExtra("idNumber", rowID);
-        pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
+        pendingIntent = PendingIntent.getBroadcast(this, (int)rowID, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, TimeFragment.timeAlarmMillis(), 0, pendingIntent);
+        manager.setRepeating(AlarmManager.RTC_WAKEUP, TimeFragment.timeAlarmMillis(), 0, pendingIntent);
         Toast.makeText(this, "Alarm Set", Toast.LENGTH_SHORT).show();
     }
 

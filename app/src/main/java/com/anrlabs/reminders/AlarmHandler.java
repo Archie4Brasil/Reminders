@@ -25,11 +25,10 @@ public class AlarmHandler extends BroadcastReceiver {
 
         dataID = arg1.getLongExtra("idNumber", -1);
 
-        if(dataID>(-1) && numMessages>0)
+        if(dataID>(-1))
         {
-            numMessages++;
             Cursor constantsCursor = DatabaseHelper.getInstance(arg0).editReminders(dataID);
-            constantsCursor.moveToPosition(0);
+            constantsCursor.move(1);
 
             title = (constantsCursor.getString(constantsCursor.getColumnIndex(DatabaseHelper.TITLE)));
 
@@ -44,9 +43,10 @@ public class AlarmHandler extends BroadcastReceiver {
 
         // Start of a loop that processes data and then notifies the user
         mBuilder.setNumber(++numMessages);
+        mBuilder.setAutoCancel(true);
 
         // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(arg0, NewReminder.class);
+        Intent resultIntent = new Intent(arg0, MainActivity.class);
 
         // The stack builder object will contain an artificial back stack for the
         // started Activity.

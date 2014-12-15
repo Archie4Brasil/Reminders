@@ -42,7 +42,7 @@ public class MainActivity extends Activity {
 
        /////////////////////// on Click listener for ListView (short click)////////////////////////
 
-       myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+       /*myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
            @Override
            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
            TextView pos = (TextView)view.findViewById(R.id.id);
@@ -50,7 +50,7 @@ public class MainActivity extends Activity {
 
            editItemInListDialog(index);
            }
-       });
+       });*/
 
         ////////////////////////////////////////////////////////////////////////////////////
 
@@ -63,11 +63,15 @@ public class MainActivity extends Activity {
             @Override
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
                                            int position, long arg3) {
-
+            boolean deleteLocation= true;
             TextView pos = (TextView)arg1.findViewById(R.id.id);
             String index = pos.getText().toString();
 
-            deleteItemFromList(index);
+            if (((TextView)arg1.findViewById(R.id.locationName)).getText().equals(""))
+            {
+                deleteLocation = false;
+            }
+            deleteItemFromList(index,deleteLocation);
 
             return true;
             }
@@ -148,7 +152,7 @@ public class MainActivity extends Activity {
         alert.show();
     }
 
-    public void deleteItemFromList(String position) {
+    public void deleteItemFromList(String position, final boolean deleteLocation) {
 
         final Long removeMessage = Long.parseLong(position);
         AlertDialog.Builder alert = new AlertDialog.Builder(
@@ -161,8 +165,10 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 DatabaseHelper.getInstance(ctx).deleteData(removeMessage);
-                geoFenceMain = new GeoFenceMain();
-                geoFenceMain.removeGeoFence(getParent(), removeMessage.toString());
+                if (deleteLocation) {
+                    geoFenceMain = new GeoFenceMain();
+                    geoFenceMain.removeGeoFence(getParent(), removeMessage.toString());
+                }
                 populateListView();
             }
 
