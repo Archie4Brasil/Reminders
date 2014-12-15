@@ -6,31 +6,41 @@ import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 /**
  * Created by Archie on 12/12/2014.
  */
+
 public class AlarmHandler extends BroadcastReceiver {
     private int numMessages = 0;
     private long dataID;
-    private String title = "Title", memo = "Memo";
+    private String title = "Title";
+
 
     @Override
     public void onReceive(Context arg0, Intent arg1) {
-        dataID = arg1.getLongExtra("idNumber", 0);
 
-        if(dataID>0 && numMessages>0)
+        dataID = arg1.getLongExtra("idNumber", -1);
+
+        if(dataID>(-1) && numMessages>0)
         {
             numMessages++;
+            Cursor constantsCursor = DatabaseHelper.getInstance(arg0).editReminders(dataID);
+            constantsCursor.moveToPosition(0);
+
+            title = (constantsCursor.getString(constantsCursor.getColumnIndex(DatabaseHelper.TITLE)));
+
+            constantsCursor.close();
         }
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(arg0)
                         .setSmallIcon(R.drawable.ic_launcher)
                         .setContentTitle(title)
-                        .setContentText(memo);
+                        .setContentText("Check Reminder");
 
         // Start of a loop that processes data and then notifies the user
         mBuilder.setNumber(++numMessages);

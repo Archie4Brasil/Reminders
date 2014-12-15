@@ -85,7 +85,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
                 + DatabaseHelper.TITLE + ", " + DatabaseHelper.MESSAGE + ", "
                 + DatabaseHelper.DATE + ", " + DatabaseHelper.TIME + ", "
                 + DatabaseHelper.XCOORDS + ", " + DatabaseHelper.YCOORDS + ", " + DatabaseHelper.RADIUS +
-                ", " + LOCATION_NAME +
+                ", " + DatabaseHelper.LOCATION_NAME +
                 " FROM " + DatabaseHelper.TABLE + " ORDER BY " + DatabaseHelper.DATE, null);
         return cursor;
     }

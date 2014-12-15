@@ -3,24 +3,17 @@ package com.anrlabs.reminders;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
-import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.anrlabs.locationreminder.GeoFenceMain;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.model.CircleOptions;
-import com.google.android.gms.maps.model.LatLng;
 
 
 /**
@@ -34,21 +27,12 @@ public class NewReminder extends Activity {
     private Double latitude;
     private Long radius;
     private String location_name;
-    protected DatabaseHelper dataCarrier;
     protected ContentValues dataFiller;
     protected EditText titleCarrier, memoCarrier;
-    protected Fragment fillFrame, other;
-    private MapView map;
-    private FragmentTransaction fragTransaction;
-
-
-
-    private Fragment mapFrag;
-
+    private int tabSelected=0;
     private PendingIntent pendingIntent;
     private AlarmManager manager;
     private Intent alarmIntent;
-    private int idDB;
     Context ctx = this;
 
 
@@ -79,24 +63,9 @@ public class NewReminder extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.reminder_new);
 
-        fillFrame = new TimeFragment();
-        FragmentTransaction fragTransaction = getFragmentManager().beginTransaction();
-        fragTransaction.replace(R.id.main_frag, fillFrame);
-        fragTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        fragTransaction.addToBackStack(null);
-        fragTransaction.commit();
-
-        circle = new CircleOptions();
-        mapView = new MapHelper();
-        // setUpMapIfNeeded();
-
-        //getting id from intent
-        rowID = this.getIntent().getLongExtra("idNumber", 0);
 
         // Retrieve a PendingIntent that will perform a broadcast
         alarmIntent = new Intent(this, AlarmHandler.class);
-        alarmIntent.putExtra("idNumber", rowID);
-        pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
 
         titleCarrier = (EditText) findViewById(R.id.titleBox);
         memoCarrier = (EditText) findViewById(R.id.memoBox);
@@ -124,6 +93,7 @@ public class NewReminder extends Activity {
     // public void selectFrag(View v)
     {
         if (fragSelected.getId() == R.id.buttonLocationFrag) {
+            tabSelected = 1;
             if (getFragmentManager().findFragmentByTag("map") != null) {
                 if (getFragmentManager().findFragmentByTag("map").isAdded())
                 {
@@ -141,6 +111,7 @@ public class NewReminder extends Activity {
 
          } else
         if (fragSelected.getId() == R.id.buttonTimeFrag) {
+            tabSelected = 2;
             if (getFragmentManager().findFragmentByTag("time") != null ) {
                 if (getFragmentManager().findFragmentByTag("time").isAdded())
                 {
@@ -175,27 +146,41 @@ public class NewReminder extends Activity {
         dataFiller = new ContentValues();
         dataFiller.put(DatabaseHelper.TITLE, titleCarrier.getText().toString());
         dataFiller.put(DatabaseHelper.MESSAGE, memoCarrier.getText().toString());
-        //dataFiller.put(DatabaseHelper.TIME, TimeFragment.passTime());
-        //dataFiller.put(DatabaseHelper.DATE, TimeFragment.passDate());
-        dataFiller.put(DatabaseHelper.XCOORDS,latitude.toString());
-        dataFiller.put(DatabaseHelper.YCOORDS,longitude.toString());
-        dataFiller.put(DatabaseHelper.RADIUS,radius.toString());
-        dataFiller.put(DatabaseHelper.RADIUS,radius.toString());
-        dataFiller.put(DatabaseHelper.LOCATION_NAME,location_name);
 
-        Long id = DatabaseHelper.getInstance(this).addData(dataFiller);
+        switch (tabSelected)
+        {
+            case 1:
+                dataFiller.put(DatabaseHelper.XCOORDS,latitude.toString());
+                dataFiller.put(DatabaseHelper.YCOORDS,longitude.toString());
+                dataFiller.put(DatabaseHelper.RADIUS,radius.toString());
+                dataFiller.put(DatabaseHelper.RADIUS,radius.toString());
+                dataFiller.put(DatabaseHelper.LOCATION_NAME,location_name);
 
-        GeoFenceMain gm = new GeoFenceMain();
-        gm.addGeoFence(this,id.toString(),latitude,longitude,1000);
+                Long id = DatabaseHelper.getInstance(this).addData(dataFiller);
+
+                GeoFenceMain gm = new GeoFenceMain();
+                gm.addGeoFence(this,id.toString(),latitude,longitude,1000);
+                break;
+            case 2:
+                dataFiller.put(DatabaseHelper.TIME, TimeFragment.passTime());
+                dataFiller.put(DatabaseHelper.DATE, TimeFragment.passDate());
+
+                rowID = DatabaseHelper.getInstance(this).addData(dataFiller);
+                break;
+        }
+
+
+
 
     }
 
     public void settingAlarm()
     {
-        alarmIntent.putExtra("dataID", DatabaseHelper.ID);
-
         manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-        int interval = 10000;
+
+        alarmIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        alarmIntent.putExtra("idNumber", rowID);
+        pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
 
         manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, TimeFragment.timeAlarmMillis(), 0, pendingIntent);
         Toast.makeText(this, "Alarm Set", Toast.LENGTH_SHORT).show();

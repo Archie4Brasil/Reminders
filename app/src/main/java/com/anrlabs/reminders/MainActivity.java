@@ -150,7 +150,7 @@ public class MainActivity extends Activity {
 
     public void deleteItemFromList(String position) {
 
-        final long removeMessage = Long.parseLong(position);
+        final Long removeMessage = Long.parseLong(position);
         AlertDialog.Builder alert = new AlertDialog.Builder(
                 MainActivity.this);
 
@@ -162,7 +162,7 @@ public class MainActivity extends Activity {
             public void onClick(DialogInterface dialog, int which) {
                 DatabaseHelper.getInstance(ctx).deleteData(removeMessage);
                 geoFenceMain = new GeoFenceMain();
-                geoFenceMain.removeGeoFence(getParent(),removeMessage.toString());
+                geoFenceMain.removeGeoFence(getParent(), removeMessage.toString());
                 populateListView();
             }
 
