@@ -16,6 +16,8 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
+import com.anrlabs.locationreminder.GeoFenceMain;
+
 public class MainActivity extends Activity {
     Context ctx= this;
 
@@ -24,6 +26,7 @@ public class MainActivity extends Activity {
     DatabaseHelper db;
     SimpleCursorAdapter myCursorAdapter;
     protected ListView myListView;
+    GeoFenceMain geoFenceMain;
 
     private static DatabaseHelper sInstance;
 
@@ -123,10 +126,9 @@ public class MainActivity extends Activity {
 
 
         myCursorAdapter = new SimpleCursorAdapter(this, R.layout.row,
-                cursor, new String[]{DatabaseHelper.ID, DatabaseHelper.TITLE, DatabaseHelper.MESSAGE,
-                DatabaseHelper.DATE, DatabaseHelper.TIME, DatabaseHelper.XCOORDS, DatabaseHelper.YCOORDS,
-                DatabaseHelper.RADIUS}, new int[]{R.id.id, R.id.title,
-                R.id.memo, R.id.date, R.id.time, R.id.xcoords, R.id.ycoords, R.id.radius}, 0);
+                cursor, new String[]{DatabaseHelper.ID, DatabaseHelper.TITLE,
+                DatabaseHelper.DATE, DatabaseHelper.TIME,DatabaseHelper.LOCATION_NAME},
+                new int[]{R.id.id, R.id.title, R.id.date, R.id.time,R.id.locationName}, 0);
 
         myListView = (ListView) findViewById(R.id.listViewMain);
         myListView.setAdapter(myCursorAdapter);
@@ -167,7 +169,7 @@ public class MainActivity extends Activity {
 
     public void deleteItemFromList(String position) {
 
-        final long removeMessage = Long.parseLong(position);
+        final Long removeMessage = Long.parseLong(position);
         AlertDialog.Builder alert = new AlertDialog.Builder(
                 MainActivity.this);
 
@@ -178,7 +180,8 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 DatabaseHelper.getInstance(ctx).deleteData(removeMessage);
-
+                geoFenceMain = new GeoFenceMain();
+                geoFenceMain.removeGeoFence(getParent(),removeMessage.toString());
                 populateListView();
             }
 

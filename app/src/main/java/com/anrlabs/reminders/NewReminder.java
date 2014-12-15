@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.anrlabs.locationreminder.GeoFenceMain;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -28,24 +29,22 @@ import com.google.android.gms.maps.model.LatLng;
 public class NewReminder extends Activity {
     Fragment timeFragment = new TimeFragment();
     Fragment mapFragment = new LocationFragment();
+
+    private Double longitude;
+    private Double latitude;
+    private Long radius;
+    private String location_name;
     protected DatabaseHelper dataCarrier;
     protected ContentValues dataFiller;
     protected EditText titleCarrier, memoCarrier;
     protected Fragment fillFrame, other;
     private MapView map;
     private FragmentTransaction fragTransaction;
-    double latitude;
-    double longitude;
-    String Address1;
-    String Address2;
-    String State;
-    String zipcode;
-    String Country;
-    CircleOptions circle;
-    LatLng center;
-    private double radius;
+
+
+
     private Fragment mapFrag;
-    private MapHelper mapView = null;
+
     private PendingIntent pendingIntent;
     private AlarmManager manager;
     private Intent alarmIntent;
@@ -58,6 +57,20 @@ public class NewReminder extends Activity {
     Cursor cursor;
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
+    public void setRadius(Long radius) {
+        this.radius = radius;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+    public void setLocationName(String location) {
+        this.location_name = location;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,7 +126,7 @@ public class NewReminder extends Activity {
     public void saveData(View v)
     {
         savingData();
-        settingAlarm();
+       // settingAlarm();
 
         super.onBackPressed();
     }
@@ -121,16 +134,28 @@ public class NewReminder extends Activity {
     //populating DataBase
     public void savingData()
     {
+       // Bundle mapBundle = mapFragment.getArguments();
+        //String lat = mapBundle.getString("lat");
+        //String longitude=  mapBundle.getString("long");
+
         titleCarrier = (EditText) findViewById(R.id.titleBox);
         memoCarrier = (EditText) findViewById(R.id.memoBox);
 
         dataFiller = new ContentValues();
         dataFiller.put(DatabaseHelper.TITLE, titleCarrier.getText().toString());
         dataFiller.put(DatabaseHelper.MESSAGE, memoCarrier.getText().toString());
-        dataFiller.put(DatabaseHelper.TIME, TimeFragment.passTime());
-        dataFiller.put(DatabaseHelper.DATE, TimeFragment.passDate());
+        //dataFiller.put(DatabaseHelper.TIME, TimeFragment.passTime());
+        //dataFiller.put(DatabaseHelper.DATE, TimeFragment.passDate());
+        dataFiller.put(DatabaseHelper.XCOORDS,latitude.toString());
+        dataFiller.put(DatabaseHelper.YCOORDS,longitude.toString());
+        dataFiller.put(DatabaseHelper.RADIUS,radius.toString());
+        dataFiller.put(DatabaseHelper.RADIUS,radius.toString());
+        dataFiller.put(DatabaseHelper.LOCATION_NAME,location_name);
 
-        DatabaseHelper.getInstance(this).addData(dataFiller);
+        Long id = DatabaseHelper.getInstance(this).addData(dataFiller);
+
+        GeoFenceMain gm = new GeoFenceMain();
+        gm.addGeoFence(this,id.toString(),latitude,longitude,1000);
 
     }
 

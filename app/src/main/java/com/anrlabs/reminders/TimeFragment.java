@@ -19,7 +19,6 @@ public class TimeFragment extends Fragment{
     static DatePicker datePicked;
     static int hoursDB, minDB, yearDB, monthDb, dayDB;
     View fragTrasnport;
-    Bundle saveState;
     private static Calendar today;
 
     @Override

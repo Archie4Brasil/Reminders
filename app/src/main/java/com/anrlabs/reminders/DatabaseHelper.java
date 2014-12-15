@@ -27,9 +27,11 @@ public class DatabaseHelper extends SQLiteOpenHelper
     static final String YCOORDS = "ycoords";
     static final String RADIUS = "radius";
     static final String TABLE = "reminders";
+    static final String LOCATION_NAME = "locationName";
+
     private static final String DATABASE_NAME = "db";
 
-    private static final int DATABASE_VERSION = 1;
+    static final int DATABASE_VERSION = 1;
     Cursor cursor;
 
     SQLiteDatabase db;
@@ -44,14 +46,13 @@ public class DatabaseHelper extends SQLiteOpenHelper
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + TABLE + " ("+ID +" INTEGER PRIMARY KEY AUTOINCREMENT, " + TITLE +
                 " TEXT, "+ MESSAGE + " TEXT, " + DATE + " TEXT, "+ TIME + " TEXT, " + XCOORDS +
-                " TEXT, " + YCOORDS + " TEXT, " + RADIUS + " TEXT);");
+                " TEXT, " + YCOORDS + " TEXT, " + RADIUS + " TEXT, " + LOCATION_NAME +" TEXT);");
     }
 
 
-    public void addData(ContentValues cv){
+    public long addData(ContentValues cv){
         db = this.getWritableDatabase();
-
-        db.insert(TABLE, TITLE, cv);
+        return  db.insert(TABLE, TITLE, cv);
     }
 
     @Override
@@ -85,6 +86,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
                 + DatabaseHelper.TITLE + ", " + DatabaseHelper.MESSAGE + ", "
                 + DatabaseHelper.DATE + ", " + DatabaseHelper.TIME + ", "
                 + DatabaseHelper.XCOORDS + ", " + DatabaseHelper.YCOORDS + ", " + DatabaseHelper.RADIUS +
+                ", " + LOCATION_NAME +
                 " FROM " + DatabaseHelper.TABLE + " ORDER BY " + DatabaseHelper.DATE, null);
         return cursor;
     }
