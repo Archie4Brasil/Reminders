@@ -47,8 +47,9 @@ public class MainActivity extends Activity {
            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                TextView pos = (TextView)view.findViewById(R.id.id);
                String index = pos.getText().toString();
-
-               editItemInListDialog(index);
+               Intent showReminder = new Intent(getApplicationContext(), ShowReminder.class);
+               showReminder.putExtra("notificationId", index);
+               startActivity(showReminder);
 
            }
        });
@@ -68,7 +69,7 @@ public class MainActivity extends Activity {
              TextView pos = (TextView)arg1.findViewById(R.id.id);
                 String index = pos.getText().toString();
 
-                deleteItemFromList(index);
+               // deleteItemFromList(index);
 
                 return true;
             }

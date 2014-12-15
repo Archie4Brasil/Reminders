@@ -36,7 +36,7 @@ import java.util.Locale;
  */
 public   class LocationFragment extends Fragment implements View.OnClickListener {
     private GoogleMap googleMap;
-    private MapView map;
+
 
     Double latitude;
     Double longitude;
@@ -59,6 +59,7 @@ public   class LocationFragment extends Fragment implements View.OnClickListener
 
         textAddress = (EditText) view.findViewById(R.id.address);
         textRadius = (EditText) view.findViewById(R.id.radius);
+
         remiderActivity = (NewReminder) getActivity();
         if (googleMap == null) {
             googleMap = ((MapFragment) getFragmentManager().
@@ -67,8 +68,9 @@ public   class LocationFragment extends Fragment implements View.OnClickListener
             googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
                 @Override
                 public void onMapLongClick(LatLng latLng) {
+                    radiusValue = Long.parseLong(textRadius.getText().toString());
                     if (radiusValue != null) {
-                    dropMarker(latLng);
+                        dropMarker(latLng);
                     } else {
                         //TODO show dialog message
                     }
@@ -131,7 +133,7 @@ public   class LocationFragment extends Fragment implements View.OnClickListener
         }
         radiusValue = Long.parseLong(textRadius.getText().toString());
         try {
-            addresses = geocoder.getFromLocationName(textRadius.getText().toString(), 1);
+            addresses = geocoder.getFromLocationName(textAddress.getText().toString(), 1);
             if (addresses.size() > 0) {
                  latitude = addresses.get(0).getLatitude();
                  longitude = addresses.get(0).getLongitude();

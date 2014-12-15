@@ -91,11 +91,11 @@ public class DatabaseHelper extends SQLiteOpenHelper
         return cursor;
     }
 
-    public Cursor editRemiders(long id){
-        cursor = db.query(DatabaseHelper.TABLE, new String[]{DatabaseHelper.ID,
+    public Cursor loadRemiderDetails(long id){
+        cursor = this.getReadableDatabase().query(DatabaseHelper.TABLE, new String[]{DatabaseHelper.ID,
                         DatabaseHelper.TITLE, DatabaseHelper.MESSAGE, DatabaseHelper.DATE,
                         DatabaseHelper.TIME, DatabaseHelper.XCOORDS, DatabaseHelper.YCOORDS,
-                        DatabaseHelper.RADIUS}, DatabaseHelper.ID + "=?",
+                        DatabaseHelper.RADIUS,DatabaseHelper.LOCATION_NAME}, DatabaseHelper.ID + "=?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
        return cursor;
     }
