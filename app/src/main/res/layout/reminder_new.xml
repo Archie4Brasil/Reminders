@@ -16,12 +16,15 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Title:"
-            android:id="@+id/titleView" />
+            android:text="TODO:"
+            android:textSize="12sp"
+            android:id="@+id/titleView"
+            android:layout_gravity="center_horizontal"/>
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:textSize="12sp"
             android:id="@+id/titleBox" />
 
     </LinearLayout>
@@ -30,20 +33,23 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="12sp"
         android:layout_weight="0" >
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Memo:"
+            android:text="NOTES:"
+            android:textSize="12sp"
             android:id="@+id/memoView"
-            android:layout_gravity="top"/>
+            android:layout_gravity="center_horizontal"/>
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="textMultiLine"
+            android:textSize="12sp"
             android:id="@+id/memoBox" />
 
     </LinearLayout>
@@ -55,7 +61,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_weight="2">
 
-        <LinearLayout
+    <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -65,36 +71,42 @@
 
             <Button
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
+                android:textSize="10sp"
                 android:text="Time"
                 android:id="@+id/buttonTimeFrag"
+                android:layout_alignParentLeft="true"
                 android:layout_weight="2"
                 android:onClick="selectFrag"/>
 
             <Button
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
+                android:textSize="10sp"
                 android:text="Location"
+                android:layout_alignParentRight="true"
                 android:id="@+id/buttonLocationFrag"
                 android:layout_weight="2"
                 android:onClick="selectFrag"/>
-                <!--android:id="@+id/locationFrag"/-->
+            <!--android:id="@+id/locationFrag"/-->
 
-        </LinearLayout>
-
-
+    </LinearLayout>
         <FrameLayout
             android:id="@+id/main_frag"
             android:layout_below="@id/buttonTimeFrag"
             android:layout_width="fill_parent"
-            android:layout_height="250dp"
-            android:layout_weight="2"/>
+            android:layout_height="wrap_content"
+            />
+
 
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Save"
+            android:layout_width="fill_parent"
+            android:layout_alignParentBottom="true"
+            android:text="ADD"
+            android:layout_height="30dp"
+            android:textSize="10sp"
+            android:gravity="center"
             android:id="@+id/cancelButton"
             android:layout_weight="0"
             android:layout_gravity="center"

@@ -3,17 +3,24 @@ package com.anrlabs.reminders;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.anrlabs.locationreminder.GeoFenceMain;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
 
 
 /**
@@ -22,9 +29,22 @@ import com.google.android.gms.maps.model.CircleOptions;
 public class NewReminder extends Activity {
     Fragment timeFragment = new TimeFragment();
     Fragment mapFragment = new LocationFragment();
+
+    private Double longitude;
+    private Double latitude;
+    private Long radius;
+    private String location_name;
+    protected DatabaseHelper dataCarrier;
     protected ContentValues dataFiller;
     protected EditText titleCarrier, memoCarrier;
-    CircleOptions circle;
+    protected Fragment fillFrame, other;
+    private MapView map;
+    private FragmentTransaction fragTransaction;
+
+
+
+    private Fragment mapFrag;
+
     private PendingIntent pendingIntent;
     private AlarmManager manager;
     private Intent alarmIntent;
@@ -33,18 +53,38 @@ public class NewReminder extends Activity {
 
 
     /////////////////////////////////// added by michael //////////////////////////////////////////
+    private long rowID;
+    int year,day,month;
     //SQLiteCursor cursor;
     Cursor cursor;
-    private MapHelper mapView;
-    private long rowID = 0;
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
+    public void setRadius(Long radius) {
+        this.radius = radius;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+    public void setLocationName(String location) {
+        this.location_name = location;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.reminder_new);
 
+        fillFrame = new TimeFragment();
+        FragmentTransaction fragTransaction = getFragmentManager().beginTransaction();
+        fragTransaction.replace(R.id.main_frag, fillFrame);
+        fragTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        fragTransaction.addToBackStack(null);
+        fragTransaction.commit();
 
         circle = new CircleOptions();
         mapView = new MapHelper();
@@ -135,16 +175,25 @@ public class NewReminder extends Activity {
         dataFiller = new ContentValues();
         dataFiller.put(DatabaseHelper.TITLE, titleCarrier.getText().toString());
         dataFiller.put(DatabaseHelper.MESSAGE, memoCarrier.getText().toString());
-        dataFiller.put(DatabaseHelper.TIME, TimeFragment.passTime());
-        dataFiller.put(DatabaseHelper.DATE, TimeFragment.passDate());
+        //dataFiller.put(DatabaseHelper.TIME, TimeFragment.passTime());
+        //dataFiller.put(DatabaseHelper.DATE, TimeFragment.passDate());
+        dataFiller.put(DatabaseHelper.XCOORDS,latitude.toString());
+        dataFiller.put(DatabaseHelper.YCOORDS,longitude.toString());
+        dataFiller.put(DatabaseHelper.RADIUS,radius.toString());
+        dataFiller.put(DatabaseHelper.RADIUS,radius.toString());
+        dataFiller.put(DatabaseHelper.LOCATION_NAME,location_name);
 
-        DatabaseHelper.getInstance(this).addData(dataFiller);
+        Long id = DatabaseHelper.getInstance(this).addData(dataFiller);
+
+        GeoFenceMain gm = new GeoFenceMain();
+        gm.addGeoFence(this,id.toString(),latitude,longitude,1000);
 
     }
 
     public void settingAlarm()
     {
-        //passing info for notification
+        alarmIntent.putExtra("dataID", DatabaseHelper.ID);
+
         manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         int interval = 10000;
 
@@ -153,14 +202,13 @@ public class NewReminder extends Activity {
     }
 
 
-
     ////////////////////////////// Code by Michael ///////////////////////////////////
     /*public void populateReminder(){
 
         //Toast.makeText(this, "Editing mode!", Toast.LENGTH_LONG).show();
 
         long dataBaseID = getIntent().getLongExtra("idNumber", rowID);
-        cursor = DatabaseHelper.getInstance(this).editReminders(16);
+        cursor = DatabaseHelper.getInstance(this).editRemiders(16);
         //getRowData(dataBaseID);
 
         EditText editMemo = (EditText)findViewById(R.id.memoBox);

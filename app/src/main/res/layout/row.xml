@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#0099cc"
+        android:layout_marginLeft="5dp"
+        android:layout_alignParentLeft="true"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:text="Title"
+        android:id="@+id/title" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -10,79 +20,43 @@
         android:text="ID"
         android:visibility="invisible"
         android:id="@+id/id" />
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+
+
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:textColor="#0099cc"
+        android:layout_toRightOf="@id/title"
         android:text="Date"
+        android:textSize="15sp"
         android:id="@+id/date"
-        android:gravity="center" />
+        />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:textColor="#0099cc"
+        android:layout_toRightOf="@id/date"
         android:text="Time"
+        android:textSize="15sp"
         android:id="@+id/time"
-        android:gravity="top" />
-
-    </LinearLayout>
-
-    <TextView
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:textColor="#0099cc"
-         android:layout_marginLeft="5dp"
-         android:text="Title"
-         android:id="@+id/title" />
-
+        />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:textColor="#0099cc"
-        android:text="Memo"
-        android:id="@+id/memo" />
+        android:layout_below="@id/title"
+        android:text="Time"
+        android:textSize="15sp"
+        android:id="@+id/locationName"
+        />
+/>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:textColor="#0099cc"
-            android:text="Xcoords"
-            android:id="@+id/xcoords" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:textColor="#0099cc"
-            android:text="Ycoords"
-            android:id="@+id/ycoords" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:textColor="#0099cc"
-            android:text="Radius"
-            android:id="@+id/radius" />
-
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>
