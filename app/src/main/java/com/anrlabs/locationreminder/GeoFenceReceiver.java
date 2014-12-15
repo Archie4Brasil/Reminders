@@ -99,14 +99,14 @@ public class GeoFenceReceiver extends BroadcastReceiver {
 
         Intent notificationIntent = new Intent(context, ShowReminder.class);
         notificationIntent.putExtra("notificationId",strinIds[0]);
-       /* TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addParentStack(ShowReminder.class);
         stackBuilder.addNextIntent(notificationIntent);
         PendingIntent notificationPendingIntent = stackBuilder
-                .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);*/
+                .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        int iUniqueId = (int) (System.currentTimeMillis() & 0xfffffff);
-        PendingIntent notificationPendingIntent = PendingIntent.getActivity(context, iUniqueId, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        //int iUniqueId = (int) (System.currentTimeMillis() & 0xfffffff);
+       // PendingIntent notificationPendingIntent = PendingIntent.getActivity(context, iUniqueId, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(
                 context);
@@ -114,11 +114,11 @@ public class GeoFenceReceiver extends BroadcastReceiver {
                 .setContentTitle(title)
                 .setContentText( "Click here to open app")
                 .setContentIntent(notificationPendingIntent);
+        builder.setAutoCancel(true);
 
         // Get an instance of the Notification manager
         NotificationManager mNotificationManager = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
-
         // Issue the notification
         mNotificationManager.notify(0, builder.build());
     }

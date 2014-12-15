@@ -1,5 +1,6 @@
 package com.anrlabs.locationreminder;
 import android.app.Activity;
+import android.content.Context;
 
 import com.google.android.gms.location.Geofence;
 
@@ -44,10 +45,10 @@ public class GeoFenceMain {
                 .build());
     }
 
-    public boolean addGeoFence(Activity activity, String id, double latitude, double longitude, float radius) {
+    public boolean addGeoFence(Context context, String id, double latitude, double longitude, float radius) {
         boolean added = false;
         if (checkInputs(latitude,longitude,radius)) {
-            mCreateGeoFence = new CreateGeoFence(activity);
+            mCreateGeoFence = new CreateGeoFence(context);
             this.mLatitude = latitude;
             this.mLongitude = longitude;
             this.mRadius = radius;
@@ -63,8 +64,8 @@ public class GeoFenceMain {
 
     }
 
-    public void removeGeoFence(Activity activity, String id) {
-        mDeleteGeoFence  = new DeleteGeoFence(activity);
+    public void removeGeoFence(Context context, String id) {
+        mDeleteGeoFence  = new DeleteGeoFence(context);
         mListGeoFenceId = new ArrayList<String>();
         mListGeoFenceId.add(id);
         mDeleteGeoFence.removeGeofencesById(mListGeoFenceId);

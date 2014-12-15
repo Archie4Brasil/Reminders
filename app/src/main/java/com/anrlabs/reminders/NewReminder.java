@@ -155,7 +155,7 @@ public class NewReminder extends Activity {
         Long id = DatabaseHelper.getInstance(this).addData(dataFiller);
 
         GeoFenceMain gm = new GeoFenceMain();
-        gm.addGeoFence(this,id.toString(),latitude,longitude,1000);
+        gm.addGeoFence(getApplicationContext(),id.toString(),latitude,longitude,1000);
 
     }
 

@@ -60,8 +60,7 @@ public class ShowReminder extends Activity {
             googleMap.addCircle(new CircleOptions()
                     .center(latLng)
                     .radius(Double.parseDouble(str_radius))
-                    .strokeColor(Color.RED)
-                    .fillColor(Color.BLUE));
+                    .strokeColor(Color.RED));
             googleMap.animateCamera(cameraUpdate);
             googleMap.addMarker(new MarkerOptions()
                     .position(latLng)

@@ -24,6 +24,8 @@ import java.util.List;
 public class DeleteGeoFence implements ConnectionCallbacks, LocationClient.OnRemoveGeofencesResultListener, OnConnectionFailedListener {
     LocationClient mLocationClient;
     private Context mContext;
+    private List<String> mCurrentGeofenceIds;
+
     public DeleteGeoFence(Context context) {
         mContext = context;
 
@@ -31,7 +33,6 @@ public class DeleteGeoFence implements ConnectionCallbacks, LocationClient.OnRem
         mCurrentGeofenceIds = null;
         mLocationClient = null;
     }
-    private List<String> mCurrentGeofenceIds;
 
     public void removeGeofencesById(List<String> geofenceIds) throws
             IllegalArgumentException, UnsupportedOperationException {
@@ -40,14 +41,13 @@ public class DeleteGeoFence implements ConnectionCallbacks, LocationClient.OnRem
             throw new IllegalArgumentException();
 
         } else {
-            mCurrentGeofenceIds=geofenceIds;
+            mCurrentGeofenceIds = geofenceIds;
             locationConnection().connect();
         }
     }
 
     private GooglePlayServicesClient locationConnection() {
         if (mLocationClient == null) {
-
             mLocationClient = new LocationClient(mContext, this, this);
         }
         return mLocationClient;
@@ -55,12 +55,8 @@ public class DeleteGeoFence implements ConnectionCallbacks, LocationClient.OnRem
 
     @Override
     public void onConnected(Bundle bundle) {
-
-
-              mLocationClient.removeGeofences(mCurrentGeofenceIds, this);
-
-        }
-
+        mLocationClient.removeGeofences(mCurrentGeofenceIds, this);
+    }
 
 
     @Override
