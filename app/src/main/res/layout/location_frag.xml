@@ -4,32 +4,30 @@
     android:layout_width="match_parent"
     android:layout_height="300dp">
 
-    <fragment
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.MapFragment"
+    <LinearLayout
+        android:id="@+id/topButtons"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <EditText
-            android:layout_width="200dp"
+            android:layout_width="match_parent"
             android:layout_height="30dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:id="@+id/address"
             android:textSize="10sp"
             android:hint="Address here"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true" />
+            android:layout_weight="2"/>
 
         <EditText
-            android:layout_width="60dp"
+            android:layout_width="65dp"
             android:layout_height="30dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:id="@+id/radius"
             android:textSize="10sp"
             android:inputType="number"
             android:hint="Radius"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@id/address" />
+            android:layout_weight="0"/>
 
         <Button
             android:id="@+id/buttonShow"
@@ -38,7 +36,14 @@
             android:text="Locate"
             android:textSize="10sp"
             android:layout_alignParentRight="true"
-            android:layout_toRightOf="@id/radius"/>
+            android:layout_weight="0"/>
+    </LinearLayout>
 
-    </fragment>
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/topButtons"/>
+
 </RelativeLayout>

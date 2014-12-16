@@ -30,17 +30,14 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".AlarmHandler">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".NewReminder" />
-        </receiver>
-
         <receiver
             android:name="com.anrlabs.locationreminder.GeoFenceReceiver"
             android:exported="false" >
             <intent-filter>
                 <action android:name="com.anrlabs.ACTION_RECEIVE_GEOFENCE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.RUN" />
             </intent-filter>
         </receiver>
 

@@ -61,61 +61,58 @@
         android:layout_gravity="center_horizontal"
         android:layout_weight="2">
 
-    <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="0">
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="0">
 
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:textSize="10sp"
-                android:text="Time"
-                android:id="@+id/buttonTimeFrag"
-                android:layout_alignParentLeft="true"
-                android:layout_weight="2"
-                android:onClick="selectFrag"/>
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:textSize="10sp"
+                    android:text="Time"
+                    android:id="@+id/buttonTimeFrag"
+                    android:layout_alignParentLeft="true"
+                    android:layout_weight="2"
+                    android:onClick="selectFrag"/>
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:textSize="10sp"
-                android:text="Location"
-                android:layout_alignParentRight="true"
-                android:id="@+id/buttonLocationFrag"
-                android:layout_weight="2"
-                android:onClick="selectFrag"/>
-            <!--android:id="@+id/locationFrag"/-->
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:textSize="10sp"
+                    android:text="Location"
+                    android:layout_alignParentRight="true"
+                    android:id="@+id/buttonLocationFrag"
+                    android:layout_weight="2"
+                    android:onClick="selectFrag"/>
+                <!--android:id="@+id/locationFrag"/-->
 
-    </LinearLayout>
+        </LinearLayout>
+
         <FrameLayout
             android:id="@+id/main_frag"
             android:layout_below="@id/buttonTimeFrag"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
             />
-
-
-
-        <Button
-            android:layout_width="fill_parent"
-            android:layout_alignParentBottom="true"
-            android:text="ADD"
-            android:layout_height="30dp"
-            android:textSize="10sp"
-            android:gravity="center"
-            android:id="@+id/cancelButton"
-            android:layout_weight="0"
-            android:layout_gravity="center"
-            android:onClick="saveData"/>
-
-
 
     </LinearLayout>
 
 
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_alignParentBottom="true"
+        android:text="ADD"
+        android:layout_height="30dp"
+        android:textSize="10sp"
+        android:gravity="center"
+        android:id="@+id/cancelButton"
+        android:layout_weight="0"
+        android:layout_gravity="center"
+        android:onClick="saveData"/>
 
 </LinearLayout>

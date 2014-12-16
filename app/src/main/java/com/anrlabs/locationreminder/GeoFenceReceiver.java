@@ -8,19 +8,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
-import android.support.v4.content.LocalBroadcastManager;
-import android.text.TextUtils;
 
 import com.anrlabs.reminders.DatabaseHelper;
-import com.anrlabs.reminders.MainActivity;
 import com.anrlabs.reminders.R;
 import com.anrlabs.reminders.ShowReminder;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -95,6 +90,7 @@ public class GeoFenceReceiver extends BroadcastReceiver {
 
         mNotificationManager.notify(mynotification_id, notification);
     }
+
     private void sendNotification(String title) {
 
         Intent notificationIntent = new Intent(context, ShowReminder.class);
@@ -106,7 +102,8 @@ public class GeoFenceReceiver extends BroadcastReceiver {
                 .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);*/
 
         int iUniqueId = (int) (System.currentTimeMillis() & 0xfffffff);
-        PendingIntent notificationPendingIntent = PendingIntent.getActivity(context, iUniqueId, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent notificationPendingIntent = PendingIntent.getActivity(context, iUniqueId,
+                    notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(
                 context);

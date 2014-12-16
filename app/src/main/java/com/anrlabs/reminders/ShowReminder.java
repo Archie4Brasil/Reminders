@@ -32,7 +32,7 @@ public class ShowReminder extends Activity {
         String strId = getIntent().getStringExtra("notificationId");
 
         Integer id = Integer.parseInt(strId);
-        Cursor cursor = DatabaseHelper.getInstance(this).loadRemiderDetails(id);
+        Cursor cursor = DatabaseHelper.getInstance(this).loadReminders();
         cursor.moveToFirst();
 
         ((TextView)findViewById(R.id.TV_TODO_value))

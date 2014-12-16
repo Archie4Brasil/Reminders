@@ -150,11 +150,11 @@ public class TimeFragment extends Fragment{
         Calendar moment = Calendar.getInstance();
         moment.set(yearDB, monthDb, dayDB, hoursDB, minDB);
 
-        if(System.currentTimeMillis() <= moment.getTimeInMillis()) {
+        if(System.currentTimeMillis() >= moment.getTimeInMillis()) {
             //machine milliseconds * Milliseconds * secon4ds * min * hour * day * month * year
-            return (moment.getTimeInMillis());
+            return System.currentTimeMillis();
         }
         else
-            return System.currentTimeMillis();
+            return (moment.getTimeInMillis());
     }
 }

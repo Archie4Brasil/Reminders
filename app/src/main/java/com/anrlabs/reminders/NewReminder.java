@@ -175,11 +175,11 @@ public class NewReminder extends Activity {
         manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
 
         // Retrieve a PendingIntent that will perform a broadcast
-        alarmIntent = new Intent(this, AlarmHandler.class);
+        alarmIntent = new Intent("com.anrlabs.locationreminder.GeoFenceReceiver");
         alarmIntent.putExtra("idNumber", rowID);
         pendingIntent = PendingIntent.getBroadcast(this, (int)rowID, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        manager.setRepeating(AlarmManager.RTC_WAKEUP, TimeFragment.timeAlarmMillis(), 0, pendingIntent);
+        manager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+1000, 0, pendingIntent);
         Toast.makeText(this, "Alarm Set", Toast.LENGTH_SHORT).show();
     }
 
