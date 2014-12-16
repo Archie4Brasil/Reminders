@@ -3,6 +3,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -22,14 +23,12 @@
         android:id="@+id/id" />
 
 
-
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:textColor="#0099cc"
-        android:layout_toRightOf="@id/title"
+        android:layout_below="@id/title"
         android:text="Date"
         android:textSize="15sp"
         android:id="@+id/date"
@@ -41,6 +40,7 @@
         android:layout_marginLeft="5dp"
         android:textColor="#0099cc"
         android:layout_toRightOf="@id/date"
+        android:layout_below="@id/title"
         android:text="Time"
         android:textSize="15sp"
         android:id="@+id/time"
@@ -50,8 +50,8 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:textColor="#0099cc"
-        android:layout_below="@id/title"
-        android:text="Time"
+        android:layout_below="@id/date"
+        android:text="Location"
         android:textSize="15sp"
         android:id="@+id/locationName"
         />

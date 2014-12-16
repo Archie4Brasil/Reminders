@@ -2,12 +2,13 @@ package com.anrlabs.reminders;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -27,21 +28,17 @@ public class NewReminder extends Activity {
     private Double latitude;
     private Long radius;
     private String location_name;
-    protected DatabaseHelper dataCarrier;
+    private static String time, date;
     protected ContentValues dataFiller;
     protected EditText titleCarrier, memoCarrier;
     private int tabSelected=0;
     private PendingIntent pendingIntent;
     private AlarmManager manager;
     private Intent alarmIntent;
-    //Context ctx = this;
 
 
     /////////////////////////////////// added by michael //////////////////////////////////////////
     private long rowID;
-    int year,day,month;
-    //SQLiteCursor cursor;
-    Cursor cursor;
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public void setRadius(Long radius) {
@@ -59,6 +56,16 @@ public class NewReminder extends Activity {
         this.location_name = location;
     }
 
+    public static void setTime(String stime)
+    {
+        time = stime;
+    }
+
+    public static void setDate(String sdate)
+    {
+        date = sdate;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,23 +74,8 @@ public class NewReminder extends Activity {
         titleCarrier = (EditText) findViewById(R.id.titleBox);
         memoCarrier = (EditText) findViewById(R.id.memoBox);
 
-
-
-//        fillDisplay(rowID);
     }
 
-    public void fillDisplay(long id)
-    {
-        if(id >0) {
-            //calling specific row
-            Cursor constantsCursor = DatabaseHelper.getInstance(this).loadReminderDetails(id);
-
-            titleCarrier.setText(constantsCursor.getString(constantsCursor.getColumnIndex(DatabaseHelper.TITLE)));
-            memoCarrier.setText(constantsCursor.getString(constantsCursor.getColumnIndex(DatabaseHelper.MESSAGE)));
-
-            constantsCursor.close();
-        }
-    }
 
     //method to handle fragment selected: time or location (default time)
     public void selectFrag(View fragSelected)
@@ -128,10 +120,46 @@ public class NewReminder extends Activity {
     //saving data
     public void saveData(View v)
     {
-        savingData();
-        settingAlarm();
+        if(checkForData()) {
+            savingData();
 
-        super.onBackPressed();
+            if (tabSelected == 2) {
+                settingAlarm();
+            }
+
+            super.onBackPressed();
+        }
+        else
+        {
+            AlertDialog.Builder alert = new AlertDialog.Builder(
+                    NewReminder.this);
+
+            alert.setTitle("No Data");
+            alert.setMessage("Please Fill in To-Do and select a Time/Locations");
+            alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+
+            });
+            alert.show();
+        }
+    }
+
+    //validating entry before save
+    public boolean checkForData()
+    {
+        if(titleCarrier.getText().toString().trim().equals("")) {
+            return false;
+        }
+        else if(location_name==null && date==null)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 
     //populating DataBase
@@ -150,7 +178,6 @@ public class NewReminder extends Activity {
                 dataFiller.put(DatabaseHelper.XCOORDS,latitude.toString());
                 dataFiller.put(DatabaseHelper.YCOORDS,longitude.toString());
                 dataFiller.put(DatabaseHelper.RADIUS,radius.toString());
-                dataFiller.put(DatabaseHelper.RADIUS,radius.toString());
                 dataFiller.put(DatabaseHelper.LOCATION_NAME,location_name);
 
                 Long id = DatabaseHelper.getInstance(this).addData(dataFiller);
@@ -159,8 +186,8 @@ public class NewReminder extends Activity {
                 gm.addGeoFence(getApplicationContext(),id.toString(),latitude,longitude,radius);
                 break;
             case 2:
-                dataFiller.put(DatabaseHelper.TIME, TimeFragment.passTime());
-                dataFiller.put(DatabaseHelper.DATE, TimeFragment.passDate());
+                dataFiller.put(DatabaseHelper.TIME, time);
+                dataFiller.put(DatabaseHelper.DATE, date);
 
                 rowID = DatabaseHelper.getInstance(this).addData(dataFiller);
                 break;

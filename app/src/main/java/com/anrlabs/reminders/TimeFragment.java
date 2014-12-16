@@ -1,7 +1,6 @@
 package com.anrlabs.reminders;
 
 import android.app.Fragment;
-import android.content.ContentValues;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +37,9 @@ public class TimeFragment extends Fragment{
         monthDb = datePicked.getMonth();
         dayDB = datePicked.getDayOfMonth();
         onTimeSet(timePicked, timePicked.getCurrentHour(), timePicked.getCurrentMinute());
+
+        NewReminder.setTime(passTime());
+        NewReminder.setDate(passDate());
 
         return fragTransports;
     }
@@ -86,24 +88,6 @@ public class TimeFragment extends Fragment{
             };
 
 
-
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        //saveData();
-        //saveState.putInt("timeHour", hoursDB);
-        //saveState.putInt("timeMin", minDB);
-    }
-
-    public void saveData()
-    {
-        ContentValues temp = new ContentValues();
-        temp.put(DatabaseHelper.TIME, hoursDB + ":" + minDB);
-
-        
-    }
-
     public static String passTime()
     {
         String min, hour;
@@ -117,13 +101,18 @@ public class TimeFragment extends Fragment{
             min = Integer.toString(minDB);
         }
 
-        if(hoursDB<10)
+       if(hoursDB>12)
         {
-            hour = "0" + hoursDB;
-        }
-        else if(hoursDB>12)
-        {
-            hour = Integer.toString(hoursDB - 12);
+            int standHour = hoursDB - 12;
+
+            if(standHour<10)
+            {
+                hour = "0"+ standHour;
+            }
+            else
+            {
+                hour = Integer.toString(standHour);
+            }
         }
         else
         {
@@ -138,29 +127,10 @@ public class TimeFragment extends Fragment{
         return (monthDb + 1) + "/" + dayDB + "/" + yearDB;
     }
 
-    public static void setTime(int hour, int min)
-    {
-        timePicked.setCurrentMinute(min);
-        timePicked.setCurrentHour(hour);
-
-    }
-
     public static long timeAlarmMillis()
     {
         Calendar moment = Calendar.getInstance();
         moment.set(yearDB, monthDb, dayDB, hoursDB, minDB);
         return moment.getTimeInMillis();
-
-        /*long now = System.currentTimeMillis();
-        long estimated = moment.getTimeInMillis();
-
-        if(now > estimated) {
-            //machine milliseconds * Milliseconds * secon4ds * min * hour * day * month * year
-            return now;
-        }
-        else
-        {
-            return estimated;
-        }*/
     }
 }
