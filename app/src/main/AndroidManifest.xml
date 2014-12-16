@@ -29,6 +29,10 @@
                 <action android:name="android.intent.action.RUN" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.anrlabs.reminders.ShowReminder"
+            android:label="Recorded Reminder" >
+        </activity>
 
         <receiver
             android:name="com.anrlabs.locationreminder.GeoFenceReceiver"

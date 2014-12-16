@@ -18,7 +18,7 @@ import java.util.List;
 public class DatabaseHelper extends SQLiteOpenHelper
 {
     static final String ID = "_id";
-    static final String TITLE = "title";
+    public static final String TITLE = "title";
     static final String MESSAGE = "message";
     static final String DATE = "date";
     static final String TIME = "time";

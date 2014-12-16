@@ -35,7 +35,7 @@ public class TimeFragment extends Fragment{
                     today.get(Calendar.DAY_OF_MONTH), onDateChanged);
 
         yearDB = datePicked.getYear();
-        monthDb = datePicked.getMonth() + 1;
+        monthDb = datePicked.getMonth();
         dayDB = datePicked.getDayOfMonth();
         onTimeSet(timePicked, timePicked.getCurrentHour(), timePicked.getCurrentMinute());
 
@@ -135,7 +135,7 @@ public class TimeFragment extends Fragment{
 
     public static String passDate()
     {
-        return monthDb + "/" + dayDB + "/" + yearDB;
+        return (monthDb + 1) + "/" + dayDB + "/" + yearDB;
     }
 
     public static void setTime(int hour, int min)
@@ -149,12 +149,18 @@ public class TimeFragment extends Fragment{
     {
         Calendar moment = Calendar.getInstance();
         moment.set(yearDB, monthDb, dayDB, hoursDB, minDB);
+        return moment.getTimeInMillis();
 
-        if(System.currentTimeMillis() >= moment.getTimeInMillis()) {
+        /*long now = System.currentTimeMillis();
+        long estimated = moment.getTimeInMillis();
+
+        if(now > estimated) {
             //machine milliseconds * Milliseconds * secon4ds * min * hour * day * month * year
-            return System.currentTimeMillis();
+            return now;
         }
         else
-            return (moment.getTimeInMillis());
+        {
+            return estimated;
+        }*/
     }
 }

@@ -7,20 +7,17 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.support.v4.content.LocalBroadcastManager;
-import android.text.TextUtils;
 
 import com.anrlabs.reminders.DatabaseHelper;
-import com.anrlabs.reminders.MainActivity;
 import com.anrlabs.reminders.R;
 import com.anrlabs.reminders.ShowReminder;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -30,16 +27,30 @@ public class GeoFenceReceiver extends BroadcastReceiver {
     Context context;
     String[] strinIds;
     Intent broadcastIntent = new Intent();
+    private long dataID;
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        this.context = context;
+
         if (intent.getAction().equals("com.anrlabs.ACTION_RECEIVE_GEOFENCE")) {
             // if (intent  instanceof )
-            this.context = context;
             broadcastIntent.addCategory(GeoFenceConsants.CATEGORY_LOCATION_SERVICES);
             handleEnter(intent);
         } else  if (intent.getAction().equals("android.intent.action.RUN")) {
             //call timer
+            dataID = intent.getLongExtra("idNumber", -1);
+
+            if(dataID>(-1))
+            {
+                Cursor constantsCursor = DatabaseHelper.getInstance(context).loadReminderDetails(dataID);
+                constantsCursor.move(1);
+
+                strinIds = new String[]{Long.toString(dataID)};
+                sendNotification(constantsCursor.getString(constantsCursor.getColumnIndex(DatabaseHelper.TITLE)));
+
+                constantsCursor.close();
+            }
         }
 
     }
@@ -99,6 +110,7 @@ public class GeoFenceReceiver extends BroadcastReceiver {
 
         mNotificationManager.notify(mynotification_id, notification);
     }
+
     private void sendNotification(String title) {
 
         Intent notificationIntent = new Intent(context, ShowReminder.class);
