@@ -3,17 +3,24 @@ package com.anrlabs.reminders;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.anrlabs.locationreminder.GeoFenceMain;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
 
 
 /**
@@ -27,13 +34,14 @@ public class NewReminder extends Activity {
     private Double latitude;
     private Long radius;
     private String location_name;
+    protected DatabaseHelper dataCarrier;
     protected ContentValues dataFiller;
     protected EditText titleCarrier, memoCarrier;
     private int tabSelected=0;
     private PendingIntent pendingIntent;
     private AlarmManager manager;
     private Intent alarmIntent;
-    Context ctx = this;
+    //Context ctx = this;
 
 
     /////////////////////////////////// added by michael //////////////////////////////////////////
@@ -75,7 +83,7 @@ public class NewReminder extends Activity {
     {
         if(id >0) {
             //calling specific row
-            Cursor constantsCursor = DatabaseHelper.getInstance(ctx).editReminders(id);
+            Cursor constantsCursor = DatabaseHelper.getInstance(this).loadReminderDetails(id);
 
             titleCarrier.setText(constantsCursor.getString(constantsCursor.getColumnIndex(DatabaseHelper.TITLE)));
             memoCarrier.setText(constantsCursor.getString(constantsCursor.getColumnIndex(DatabaseHelper.MESSAGE)));
@@ -155,7 +163,7 @@ public class NewReminder extends Activity {
                 Long id = DatabaseHelper.getInstance(this).addData(dataFiller);
 
                 GeoFenceMain gm = new GeoFenceMain();
-                gm.addGeoFence(this,id.toString(),latitude,longitude,1000);
+                gm.addGeoFence(getApplicationContext(),id.toString(),latitude,longitude,radius);
                 break;
             case 2:
                 dataFiller.put(DatabaseHelper.TIME, TimeFragment.passTime());
@@ -175,31 +183,13 @@ public class NewReminder extends Activity {
         manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
 
         // Retrieve a PendingIntent that will perform a broadcast
-        alarmIntent = new Intent("com.anrlabs.locationreminder.GeoFenceReceiver");
+        alarmIntent = new Intent("android.intent.action.RUN");
         alarmIntent.putExtra("idNumber", rowID);
         pendingIntent = PendingIntent.getBroadcast(this, (int)rowID, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        manager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+1000, 0, pendingIntent);
+        manager.setRepeating(AlarmManager.RTC_WAKEUP, TimeFragment.timeAlarmMillis(), 0, pendingIntent);
         Toast.makeText(this, "Alarm Set", Toast.LENGTH_SHORT).show();
     }
 
 
-    ////////////////////////////// Code by Michael ///////////////////////////////////
-    /*public void populateReminder(){
-
-        //Toast.makeText(this, "Editing mode!", Toast.LENGTH_LONG).show();
-
-        long dataBaseID = getIntent().getLongExtra("idNumber", rowID);
-        cursor = DatabaseHelper.getInstance(this).loadRemiderDetails(16);
-        //getRowData(dataBaseID);
-
-        EditText editMemo = (EditText)findViewById(R.id.memoBox);
-        editMemo.setText(cursor.getString(2));
-
-        EditText editTitle = (EditText) findViewById(R.id.titleBox);
-        editTitle.setText(cursor.getString(1));
-
-       }*/
-    ////////////////////////////////////////////////////////////////////////////////////////////
 
 }

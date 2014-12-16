@@ -11,6 +11,7 @@ import com.google.android.gms.location.LocationClient.OnAddGeofencesResultListen
 
 import android.app.Activity;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
@@ -22,39 +23,41 @@ import java.util.List;
  * <b>
  * Note: Clients must ensure that Google Play services is available before requesting geofences.
  * </b> Use GooglePlayServicesUtil.isGooglePlayServicesAvailable() to check.
- *
- *
+ * <p/>
+ * <p/>
  * To use a GeofenceRequester, instantiate it and call AddGeofence(). Everything else is done
  * automatically.
- *
  */
 public class CreateGeoFence
-                implements
+        implements
         OnAddGeofencesResultListener,
         ConnectionCallbacks,
         OnConnectionFailedListener {
     private Geofence mGeoFence;
     private LocationClient mLocationClient;
     private PendingIntent mGeofencePendingIntent;
-    private Activity mActivity;
+    private Context mContext;
+
     List<Geofence> mLstGeoFence;
     private boolean mGeofenceAdded = false;
-    public CreateGeoFence(Activity activityContext) {
+
+    public CreateGeoFence(Context activityContext) {
         // Save the context
-        mActivity = activityContext;
+        mContext = activityContext;
         mGeofencePendingIntent = null;
         mLocationClient = null;
 
     }
+
     public void addGeoFence(List<Geofence> geofence) {
         mLstGeoFence = geofence;
         this.requestConnection().connect();
     }
-     private GooglePlayServicesClient requestConnection() {
-         if (mLocationClient == null) {
 
-             mLocationClient = new LocationClient(mActivity, this, this);
-         }
+    private GooglePlayServicesClient requestConnection() {
+        if (mLocationClient == null) {
+            mLocationClient = new LocationClient(mContext, this, this); //mActivity, this, this);
+        }
         return mLocationClient;
     }
 
@@ -65,7 +68,7 @@ public class CreateGeoFence
 
     @Override
     public void onAddGeofencesResult(int code, String[] strings) {
-      Intent broadcastIntent = new Intent();
+        Intent broadcastIntent = new Intent();
         if (LocationStatusCodes.SUCCESS == code) {
             broadcastIntent.setAction(GeoFenceConsants.ACTION_GEOFENCES_ADDED)
                     .addCategory(GeoFenceConsants.CATEGORY_LOCATION_SERVICES);
@@ -75,9 +78,9 @@ public class CreateGeoFence
             broadcastIntent.setAction(GeoFenceConsants.ACTION_GEOFENCE_ERROR)
                     .addCategory(GeoFenceConsants.CATEGORY_LOCATION_SERVICES);
         }
-         LocalBroadcastManager.getInstance(mActivity).sendBroadcast(broadcastIntent);
+        LocalBroadcastManager.getInstance(mContext).sendBroadcast(broadcastIntent);
 
-         requestDisconnection();
+        requestDisconnection();
 
     }
 
@@ -96,25 +99,23 @@ public class CreateGeoFence
      * Once the connection is available, send a request to add the Geofences
      */
     private void continueAddGeofences() {
-
         if (null == mGeofencePendingIntent) {
             Intent intent = new Intent("com.anrlabs.ACTION_RECEIVE_GEOFENCE");
-             mGeofencePendingIntent = PendingIntent.getBroadcast(
-                    mActivity,
+            mGeofencePendingIntent = PendingIntent.getBroadcast(
+                    mContext,
                     0,
                     intent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
         }
-       // Send a request to add the current geofences
-        mLocationClient.addGeofences(mLstGeoFence,mGeofencePendingIntent,this);
+        // Send a request to add the current geofences
+        mLocationClient.addGeofences(mLstGeoFence, mGeofencePendingIntent, this);
     }
-
 
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         if (connectionResult.hasResolution()) {
-        //do something
+            //do something
         }
     }
 }

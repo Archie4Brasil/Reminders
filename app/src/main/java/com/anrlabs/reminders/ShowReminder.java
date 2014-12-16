@@ -32,7 +32,7 @@ public class ShowReminder extends Activity {
         String strId = getIntent().getStringExtra("notificationId");
 
         Integer id = Integer.parseInt(strId);
-        Cursor cursor = DatabaseHelper.getInstance(this).loadReminders();
+        Cursor cursor = DatabaseHelper.getInstance(this).loadReminderDetails(id);
         cursor.moveToFirst();
 
         ((TextView)findViewById(R.id.TV_TODO_value))
@@ -46,7 +46,7 @@ public class ShowReminder extends Activity {
         }
         googleMap = ((MapFragment) getFragmentManager().
                 findFragmentById(R.id.map_view)).getMap();
-
+        googleMap.setMyLocationEnabled(true);
         String str_latitude = cursor.getString(cursor.getColumnIndex(DatabaseHelper.XCOORDS));
         String str_longitude = cursor.getString(cursor.getColumnIndex(DatabaseHelper.YCOORDS));
         String str_radius = cursor.getString(cursor.getColumnIndex(DatabaseHelper.RADIUS));
@@ -60,8 +60,7 @@ public class ShowReminder extends Activity {
             googleMap.addCircle(new CircleOptions()
                     .center(latLng)
                     .radius(Double.parseDouble(str_radius))
-                    .strokeColor(Color.RED)
-                    .fillColor(Color.BLUE));
+                    .strokeColor(Color.RED));
             googleMap.animateCamera(cameraUpdate);
             googleMap.addMarker(new MarkerOptions()
                     .position(latLng)

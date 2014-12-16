@@ -42,21 +42,18 @@ public class MainActivity extends Activity {
 
        /////////////////////// on Click listener for ListView (short click)////////////////////////
 
-       /*myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+       myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
            @Override
            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-           TextView pos = (TextView)view.findViewById(R.id.id);
-           String index = pos.getText().toString();
+               TextView pos = (TextView)view.findViewById(R.id.id);
+               String index = pos.getText().toString();
+               Intent showReminder = new Intent(getApplicationContext(), ShowReminder.class);
+               showReminder.putExtra("notificationId", index);
+               startActivity(showReminder);
 
-           editItemInListDialog(index);
            }
-       });*/
+       });
 
-        ////////////////////////////////////////////////////////////////////////////////////
-
-
-
-        ////////////////////// long click Listener for ListView ///////////////////////////////////
 
         myListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             // setting onItemLongClickListener and passing the position to the function
@@ -64,9 +61,8 @@ public class MainActivity extends Activity {
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
                                            int position, long arg3) {
             boolean deleteLocation= true;
-            TextView pos = (TextView)arg1.findViewById(R.id.id);
-            String index = pos.getText().toString();
-
+             TextView pos = (TextView)arg1.findViewById(R.id.id);
+             String index = pos.getText().toString();
             if (((TextView)arg1.findViewById(R.id.locationName)).getText().equals(""))
             {
                 deleteLocation = false;
@@ -76,10 +72,6 @@ public class MainActivity extends Activity {
             return true;
             }
         });
-
-
-
-
     }
 
     @Override
@@ -96,9 +88,15 @@ public class MainActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
 
         switch (item.getItemId()) {
-             case R.id.add_reminder:
+            case R.id.action_settings:
+                return true;
+            case R.id.add_reminder:
                 startActivity(intent);
                 return true;
             default:
@@ -107,11 +105,7 @@ public class MainActivity extends Activity {
     }
 
     public void populateListView() {
-
-
         Cursor cursor = DatabaseHelper.getInstance(this).loadReminders();
-
-
         myCursorAdapter = new SimpleCursorAdapter(this, R.layout.row,
                 cursor, new String[]{DatabaseHelper.ID, DatabaseHelper.TITLE,
                 DatabaseHelper.DATE, DatabaseHelper.TIME,DatabaseHelper.LOCATION_NAME},
@@ -123,35 +117,6 @@ public class MainActivity extends Activity {
     }
 
 
-    public void editItemInListDialog(String position){
-        final long editMessage = Long.parseLong(position);
-
-        AlertDialog.Builder alert = new AlertDialog.Builder(
-                MainActivity.this);
-
-        alert.setTitle("Edit");
-        alert.setMessage("Do you want edit this reminder?");
-
-        alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                intent.putExtra("idNumber", editMessage);
-                startActivity(intent);
-                //populateListView();
-            }
-
-        });
-
-        alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        alert.show();
-    }
-
     public void deleteItemFromList(String position, final boolean deleteLocation) {
 
         final Long removeMessage = Long.parseLong(position);
@@ -159,7 +124,7 @@ public class MainActivity extends Activity {
                 MainActivity.this);
 
         alert.setTitle("Delete");
-        alert.setMessage("Do you want delete this message?");
+        alert.setMessage("Do you want delete this reminder?");
 
         alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
             @Override
@@ -167,7 +132,7 @@ public class MainActivity extends Activity {
                 DatabaseHelper.getInstance(ctx).deleteData(removeMessage);
                 if (deleteLocation) {
                     geoFenceMain = new GeoFenceMain();
-                    geoFenceMain.removeGeoFence(getParent(), removeMessage.toString());
+                    geoFenceMain.removeGeoFence(getApplication(), removeMessage.toString());
                 }
                 populateListView();
             }
