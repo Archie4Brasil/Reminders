@@ -37,6 +37,7 @@ public class CreateGeoFence
     private LocationClient mLocationClient;
     private PendingIntent mGeofencePendingIntent;
     private Context mContext;
+
     List<Geofence> mLstGeoFence;
     private boolean mGeofenceAdded = false;
 

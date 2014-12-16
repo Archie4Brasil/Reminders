@@ -27,7 +27,7 @@ public class AlarmHandler extends BroadcastReceiver {
 
         if(dataID>(-1))
         {
-            Cursor constantsCursor = DatabaseHelper.getInstance(arg0).editReminders(dataID);
+            Cursor constantsCursor = DatabaseHelper.getInstance(arg0).loadReminderDetails(dataID);
             constantsCursor.move(1);
 
             title = (constantsCursor.getString(constantsCursor.getColumnIndex(DatabaseHelper.TITLE)));

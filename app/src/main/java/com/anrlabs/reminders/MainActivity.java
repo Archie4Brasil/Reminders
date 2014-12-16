@@ -132,7 +132,7 @@ public class MainActivity extends Activity {
                 DatabaseHelper.getInstance(ctx).deleteData(removeMessage);
                 if (deleteLocation) {
                     geoFenceMain = new GeoFenceMain();
-                    geoFenceMain.removeGeoFence(getParent(), removeMessage.toString());
+                    geoFenceMain.removeGeoFence(getApplication(), removeMessage.toString());
                 }
                 populateListView();
             }

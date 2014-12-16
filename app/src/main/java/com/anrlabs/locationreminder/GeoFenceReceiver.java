@@ -33,10 +33,14 @@ public class GeoFenceReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        this.context = context;
-
-        broadcastIntent.addCategory(GeoFenceConsants.CATEGORY_LOCATION_SERVICES);
-        handleEnter(intent);
+        if (intent.getAction().equals("com.anrlabs.ACTION_RECEIVE_GEOFENCE")) {
+            // if (intent  instanceof )
+            this.context = context;
+            broadcastIntent.addCategory(GeoFenceConsants.CATEGORY_LOCATION_SERVICES);
+            handleEnter(intent);
+        } else  if (intent.getAction().equals("android.intent.action.RUN")) {
+            //call timer
+        }
 
     }
 

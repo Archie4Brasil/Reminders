@@ -41,7 +41,7 @@ public class NewReminder extends Activity {
     private PendingIntent pendingIntent;
     private AlarmManager manager;
     private Intent alarmIntent;
-    Context ctx = this;
+    //Context ctx = this;
 
 
     /////////////////////////////////// added by michael //////////////////////////////////////////
@@ -83,7 +83,7 @@ public class NewReminder extends Activity {
     {
         if(id >0) {
             //calling specific row
-            Cursor constantsCursor = DatabaseHelper.getInstance(ctx).editReminders(id);
+            Cursor constantsCursor = DatabaseHelper.getInstance(this).loadReminderDetails(id);
 
             titleCarrier.setText(constantsCursor.getString(constantsCursor.getColumnIndex(DatabaseHelper.TITLE)));
             memoCarrier.setText(constantsCursor.getString(constantsCursor.getColumnIndex(DatabaseHelper.MESSAGE)));
@@ -150,29 +150,18 @@ public class NewReminder extends Activity {
         dataFiller = new ContentValues();
         dataFiller.put(DatabaseHelper.TITLE, titleCarrier.getText().toString());
         dataFiller.put(DatabaseHelper.MESSAGE, memoCarrier.getText().toString());
-        //dataFiller.put(DatabaseHelper.TIME, TimeFragment.passTime());
-        //dataFiller.put(DatabaseHelper.DATE, TimeFragment.passDate());
-        dataFiller.put(DatabaseHelper.XCOORDS,latitude.toString());
-        dataFiller.put(DatabaseHelper.YCOORDS,longitude.toString());
-        dataFiller.put(DatabaseHelper.RADIUS,radius.toString());
-        dataFiller.put(DatabaseHelper.RADIUS,radius.toString());
-        dataFiller.put(DatabaseHelper.LOCATION_NAME,location_name);
-
         switch (tabSelected)
         {
             case 1:
                 dataFiller.put(DatabaseHelper.XCOORDS,latitude.toString());
                 dataFiller.put(DatabaseHelper.YCOORDS,longitude.toString());
                 dataFiller.put(DatabaseHelper.RADIUS,radius.toString());
-                dataFiller.put(DatabaseHelper.RADIUS,radius.toString());
                 dataFiller.put(DatabaseHelper.LOCATION_NAME,location_name);
 
-        GeoFenceMain gm = new GeoFenceMain();
-        gm.addGeoFence(getApplicationContext(),id.toString(),latitude,longitude,1000);
                 Long id = DatabaseHelper.getInstance(this).addData(dataFiller);
 
                 GeoFenceMain gm = new GeoFenceMain();
-                gm.addGeoFence(this,id.toString(),latitude,longitude,1000);
+                gm.addGeoFence(getApplicationContext(),id.toString(),latitude,longitude,radius);
                 break;
             case 2:
                 dataFiller.put(DatabaseHelper.TIME, TimeFragment.passTime());
@@ -192,63 +181,13 @@ public class NewReminder extends Activity {
         manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
 
         // Retrieve a PendingIntent that will perform a broadcast
-        alarmIntent = new Intent(this, AlarmHandler.class);
+        alarmIntent = new Intent("android.intent.action.RUN");
         alarmIntent.putExtra("idNumber", rowID);
         pendingIntent = PendingIntent.getBroadcast(this, (int)rowID, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
         manager.setRepeating(AlarmManager.RTC_WAKEUP, TimeFragment.timeAlarmMillis(), 0, pendingIntent);
         Toast.makeText(this, "Alarm Set", Toast.LENGTH_SHORT).show();
     }
 
 
-    ////////////////////////////// Code by Michael ///////////////////////////////////
-    /*public void populateReminder(){
-
-        //Toast.makeText(this, "Editing mode!", Toast.LENGTH_LONG).show();
-
-        long dataBaseID = getIntent().getLongExtra("idNumber", rowID);
-        cursor = DatabaseHelper.getInstance(this).loadRemiderDetails(16);
-        //getRowData(dataBaseID);
-
-        EditText editMemo = (EditText)findViewById(R.id.memoBox);
-        editMemo.setText(cursor.getString(2));
-
-        EditText editTitle = (EditText) findViewById(R.id.titleBox);
-        editTitle.setText(cursor.getString(1));
-
-        DatePicker editDate = (DatePicker)findViewById(R.id.dateRemember);
-        //editDate.init(year, month, day, null);
-        //editDate.updateDate(2014, 12, 10);
-
-
-        TimePicker editTIme = (TimePicker)findViewById(R.id.timeRemeber);
-        //editTIme.setCurrentHour(1);
-          //editTIme.setCurrentMinute(25);
-
-       }
-
-       public void getRowData(long id){
-
-           /*SQLiteDatabase db = dataCarrier.getReadableDatabase();
-
-
-
-           //Integer.parseInt(cursor.getString(0));
-
-
-
-         /* dataCarrier = new DatabaseHelper(this, DatabaseHelper.TABLE, null, 1);
-
-           cursor = (SQLiteCursor) dataCarrier.getReadableDatabase().rawQuery("SELECT " + DatabaseHelper.ID + ", "
-                   + DatabaseHelper.TITLE + ", " + DatabaseHelper.MESSAGE + ", "
-                   + DatabaseHelper.DATE + ", " + DatabaseHelper.TIME + ", "
-                   + DatabaseHelper.XCOORDS + ", " + DatabaseHelper.YCOORDS + ", " + DatabaseHelper.RADIUS +
-                   " FROM " + DatabaseHelper.TABLE + " ORDER BY " + DatabaseHelper.DATE, null);
-           if (cursor != null) {
-
-               cursor.moveToFirst();
-           }*/
-       }
-    ////////////////////////////////////////////////////////////////////////////////////////////
 
 }

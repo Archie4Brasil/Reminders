@@ -90,11 +90,11 @@ public class DatabaseHelper extends SQLiteOpenHelper
         return cursor;
     }
 
-    public Cursor editReminders(long id){
+    public Cursor loadReminderDetails(long id){
         cursor = this.getWritableDatabase().query(DatabaseHelper.TABLE, new String[]{DatabaseHelper.ID,
                         DatabaseHelper.TITLE, DatabaseHelper.MESSAGE, DatabaseHelper.DATE,
                         DatabaseHelper.TIME, DatabaseHelper.XCOORDS, DatabaseHelper.YCOORDS,
-                        DatabaseHelper.RADIUS}, DatabaseHelper.ID + "=?",
+                        DatabaseHelper.RADIUS,DatabaseHelper.LOCATION_NAME}, DatabaseHelper.ID + "=?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
        return cursor;
     }
