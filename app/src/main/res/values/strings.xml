@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Reminders</string>
-    <string name="TODO">TODO : </string>
+    <string name="TODO">TO-DO : </string>
     <string name="Notes">Notes : </string>
     <string name="Time">Date-Time : </string>
     <string name="Location">Location : </string>

@@ -57,14 +57,14 @@ public class NewReminder extends Activity {
         this.location_name = location;
     }
 
-    public static void setTime(String stime)
+    public static void setTime(String sTime)
     {
-        time = stime;
+        time = sTime;
     }
 
-    public static void setDate(String sdate)
+    public static void setDate(String sDate)
     {
-        date = sdate;
+        date = sDate;
     }
 
     @Override
@@ -124,6 +124,7 @@ public class NewReminder extends Activity {
         if(checkForData()) {
             savingData();
 
+            //for timer alarm
             if (tabSelected == 2) {
                 settingAlarm();
             }
