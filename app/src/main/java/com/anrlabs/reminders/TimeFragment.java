@@ -129,6 +129,9 @@ public class TimeFragment extends Fragment{
 
     public static long timeAlarmMillis()
     {
+        NewReminder.setTime(passTime());
+        NewReminder.setDate(passDate());
+
         Calendar moment = Calendar.getInstance();
         moment.set(yearDB, monthDb, dayDB, hoursDB, minDB);
         return moment.getTimeInMillis();

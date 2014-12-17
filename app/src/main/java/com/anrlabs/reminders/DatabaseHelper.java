@@ -17,7 +17,7 @@ import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper
 {
-    static final String ID = "_id";
+    static final String ID = "number";
     public static final String TITLE = "title";
     static final String MESSAGE = "message";
     static final String DATE = "date";
@@ -81,12 +81,12 @@ public class DatabaseHelper extends SQLiteOpenHelper
     }
 
     public Cursor loadReminders(){
-        cursor = (SQLiteCursor) this.getReadableDatabase().rawQuery("SELECT " + DatabaseHelper.ID + ", "
+        cursor = (SQLiteCursor) this.getReadableDatabase().rawQuery("SELECT _id, " + DatabaseHelper.ID + ", "
                 + DatabaseHelper.TITLE + ", " + DatabaseHelper.MESSAGE + ", "
                 + DatabaseHelper.DATE + ", " + DatabaseHelper.TIME + ", "
                 + DatabaseHelper.XCOORDS + ", " + DatabaseHelper.YCOORDS + ", " + DatabaseHelper.RADIUS +
                 ", " + DatabaseHelper.LOCATION_NAME +
-                " FROM " + DatabaseHelper.TABLE + " ORDER BY " + DatabaseHelper.DATE, null);
+                " FROM " + DatabaseHelper.TABLE + " ORDER BY " + DatabaseHelper.ID + " DESC", null);
         return cursor;
     }
 
@@ -98,6 +98,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
                 new String[] { String.valueOf(id) }, null, null, null, null);
        return cursor;
     }
+
     public List<String> loadTitlesForNotification(String ids[]) {
         List<String> lstIds = new ArrayList<String>();
         StringBuffer buffer = new StringBuffer();
