@@ -99,6 +99,7 @@ public class ShowReminder extends Activity {
      * but you can override this to do whatever you want.
      */
     public void onBackPressed() {
+        this.finish();
         Intent mainActivity = new Intent(this,MainActivity.class);
         mainActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(mainActivity);

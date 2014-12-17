@@ -17,7 +17,7 @@ import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper
 {
-    static final String ID = "number";
+    static final String ID = "_id";
     public static final String TITLE = "title";
     static final String MESSAGE = "message";
     static final String DATE = "date";
@@ -81,7 +81,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     }
 
     public Cursor loadReminders(){
-        cursor = (SQLiteCursor) this.getReadableDatabase().rawQuery("SELECT _id, " + DatabaseHelper.ID + ", "
+        cursor = (SQLiteCursor) this.getReadableDatabase().rawQuery("SELECT " + DatabaseHelper.ID + ", "
                 + DatabaseHelper.TITLE + ", " + DatabaseHelper.MESSAGE + ", "
                 + DatabaseHelper.DATE + ", " + DatabaseHelper.TIME + ", "
                 + DatabaseHelper.XCOORDS + ", " + DatabaseHelper.YCOORDS + ", " + DatabaseHelper.RADIUS +

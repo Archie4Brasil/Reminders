@@ -38,10 +38,15 @@ public class TimeFragment extends Fragment{
         dayDB = datePicked.getDayOfMonth();
         onTimeSet(timePicked, timePicked.getCurrentHour(), timePicked.getCurrentMinute());
 
-        NewReminder.setTime(passTime());
-        NewReminder.setDate(passDate());
+        setTime();
 
         return fragTransports;
+    }
+
+    public static void setTime()
+    {
+        NewReminder.setTime(passTime());
+        NewReminder.setDate(passDate());
     }
 
     public static void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -50,12 +55,15 @@ public class TimeFragment extends Fragment{
         datetime.set(Calendar.HOUR_OF_DAY, hourOfDay);
         datetime.set(Calendar.MINUTE, minute);
 
-        if (datetime.get(Calendar.AM_PM) == Calendar.AM)
+        if (datetime.get(Calendar.AM_PM) == Calendar.AM) {
             morningEvening = "AM";
-        else if (datetime.get(Calendar.AM_PM) == Calendar.PM)
+            hoursDB = hourOfDay;
+        }
+        else if (datetime.get(Calendar.AM_PM) == Calendar.PM) {
             morningEvening = "PM";
+            hoursDB = hourOfDay - 12;
+        }
 
-        hoursDB = hourOfDay - 12;
         minDB = minute;
 
 
@@ -70,6 +78,8 @@ public class TimeFragment extends Fragment{
                         int minute) {
                     hoursDB = hourOfDay;
                     minDB = minute;
+
+                    setTime();
                 }
             };
 
@@ -84,6 +94,8 @@ public class TimeFragment extends Fragment{
                     yearDB = year;
                     monthDb = monthOfYear + 1;
                     dayDB = dayOfMonth;
+
+                    setTime();
                 }
             };
 
@@ -101,7 +113,7 @@ public class TimeFragment extends Fragment{
             min = Integer.toString(minDB);
         }
 
-       if(hoursDB>12)
+        if(hoursDB>12)
         {
             int standHour = hoursDB - 12;
 
@@ -113,6 +125,10 @@ public class TimeFragment extends Fragment{
             {
                 hour = Integer.toString(standHour);
             }
+        }
+        else if(hoursDB<10)
+        {
+            hour = "0" + hoursDB;
         }
         else
         {
@@ -129,8 +145,7 @@ public class TimeFragment extends Fragment{
 
     public static long timeAlarmMillis()
     {
-        NewReminder.setTime(passTime());
-        NewReminder.setDate(passDate());
+        setTime();
 
         Calendar moment = Calendar.getInstance();
         moment.set(yearDB, monthDb, dayDB, hoursDB, minDB);

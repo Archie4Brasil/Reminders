@@ -117,6 +117,8 @@ public class MainActivity extends Activity {
     }
 
 
+
+
     public void deleteItemFromList(String position, final boolean deleteLocation) {
 
         final Long removeMessage = Long.parseLong(position);

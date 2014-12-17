@@ -121,12 +121,13 @@ public class NewReminder extends Activity {
     public void saveData(View v)
     {
         if(checkForData()) {
+            savingData();
+
             //for timer alarm
             if (tabSelected == 2) {
                 settingAlarm();
             }
 
-            savingData();
             super.onBackPressed();
         }
         else
