@@ -14,6 +14,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -47,15 +49,18 @@ public class LocationFragment extends Fragment implements View.OnClickListener {
     Geocoder geocoder;
     List<Address> addresses;
     Long radiusValue;
-    EditText textAddress;
+    //EditText textAddress;
     EditText textRadius;
     View view;
     private GoogleMap googleMap;
+    private AutoCompleteTextView textAddress;
+    private String[] addressData;
+    private ArrayAdapter<String> adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.location_frag, container, false);
-        textAddress = (EditText) view.findViewById(R.id.address);
+        textAddress = (AutoCompleteTextView) view.findViewById(R.id.address);
         textRadius = (EditText) view.findViewById(R.id.radius);
 
         remiderActivity = (NewReminder) getActivity();
@@ -78,6 +83,9 @@ public class LocationFragment extends Fragment implements View.OnClickListener {
         }
         googleMap.setMyLocationEnabled(true);
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        addressData = DatabaseHelper.getInstance(view.getContext()).getAddresses();
+        adapter = new ArrayAdapter<String>(view.getContext(), R.layout.layout_row, addressData);
+        textAddress.setAdapter(adapter);
         Button button = (Button) view.findViewById(R.id.buttonShow);
         button.setOnClickListener(this);
         return view;
@@ -164,5 +172,10 @@ public class LocationFragment extends Fragment implements View.OnClickListener {
                 Log.e(TAG, "Error occured on Click() " + e.getMessage());
             }
         }
+    }
+
+    public void onDestroy(){
+        super.onDestroy();
+
     }
 }

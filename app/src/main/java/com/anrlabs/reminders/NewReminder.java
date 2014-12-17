@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -183,6 +184,7 @@ public class NewReminder extends Activity {
                 Long id = DatabaseHelper.getInstance(this).addData(dataFiller);
 
                 GeoFenceMain gm = new GeoFenceMain();
+                Toast.makeText(this, "here", Toast.LENGTH_LONG).show();
                 gm.addGeoFence(getApplicationContext(),id.toString(),latitude,longitude,radius);
                 break;
             case 2:
@@ -192,7 +194,6 @@ public class NewReminder extends Activity {
                 rowID = DatabaseHelper.getInstance(this).addData(dataFiller);
                 break;
         }
-
 
 
 

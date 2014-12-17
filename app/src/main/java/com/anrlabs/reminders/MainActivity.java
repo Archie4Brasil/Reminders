@@ -21,7 +21,7 @@ import com.anrlabs.locationreminder.GeoFenceMain;
 public class MainActivity extends Activity {
     Context ctx= this;
 
-    Intent intent;
+    Intent intent, intent1;
     SQLiteCursor cursor;
     DatabaseHelper db;
     SimpleCursorAdapter myCursorAdapter;
@@ -35,6 +35,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         intent = new Intent(this, NewReminder.class);
+        intent1 = new Intent(this, Preferences.class);
 
         populateListView();
 
@@ -98,6 +99,9 @@ public class MainActivity extends Activity {
                 return true;
             case R.id.add_reminder:
                 startActivity(intent);
+                return true;
+            case R.id.preferences:
+                startActivity(intent1);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

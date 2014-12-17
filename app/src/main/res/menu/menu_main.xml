@@ -6,6 +6,10 @@
         android:icon="@drawable/pic7"
         android:showAsAction="ifRoom"
         android:title="Add Reminder"/>
+    <item android:id="@+id/action_settings"
+        android:title="actionBar"/>
+    <item android:id="@+id/preferences"
+        android:title="Preferences"/>
 
 
 
