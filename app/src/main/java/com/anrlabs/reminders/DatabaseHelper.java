@@ -118,4 +118,26 @@ public class DatabaseHelper extends SQLiteOpenHelper
         }
         return lstIds;
     }
+
+    public String[] getAddresses(){
+        Cursor cursor = this.getReadableDatabase().rawQuery("SELECT * FROM "
+                + TABLE, null);
+        if(cursor.getCount() > 0)
+        {
+            String[] str = new String[cursor.getCount()];
+            int i = 0;
+        while (cursor.moveToNext()){
+            str[i] = cursor.getString(cursor.getColumnIndex(LOCATION_NAME));
+            i++;
+        }
+            return str;
+        }
+        else
+        {
+            return new String[] {};
+        }
+
+    }
+
+
 }

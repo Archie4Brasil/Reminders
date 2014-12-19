@@ -2,7 +2,6 @@ package com.anrlabs.reminders;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.location.Address;
@@ -10,30 +9,24 @@ import android.location.Geocoder;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.anrlabs.locationreminder.GeoFenceMain;
-import com.google.android.gms.internal.r;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by Archie on 12/8/2014.
@@ -47,15 +40,18 @@ public class LocationFragment extends Fragment implements View.OnClickListener {
     Geocoder geocoder;
     List<Address> addresses;
     Long radiusValue;
-    EditText textAddress;
+    //EditText textAddress;
     EditText textRadius;
     View view;
     private GoogleMap googleMap;
+    private AutoCompleteTextView textAddress;
+    private String[] addressData;
+    private ArrayAdapter<String> adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.location_frag, container, false);
-        textAddress = (EditText) view.findViewById(R.id.address);
+        textAddress = (AutoCompleteTextView) view.findViewById(R.id.address);
         textRadius = (EditText) view.findViewById(R.id.radius);
 
         remiderActivity = (NewReminder) getActivity();
@@ -78,6 +74,9 @@ public class LocationFragment extends Fragment implements View.OnClickListener {
         }
         googleMap.setMyLocationEnabled(true);
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        addressData = DatabaseHelper.getInstance(view.getContext()).getAddresses();
+        adapter = new ArrayAdapter<String>(view.getContext(), R.layout.layout_row, addressData);
+        textAddress.setAdapter(adapter);
         Button button = (Button) view.findViewById(R.id.buttonShow);
         button.setOnClickListener(this);
         return view;
@@ -164,5 +163,10 @@ public class LocationFragment extends Fragment implements View.OnClickListener {
                 Log.e(TAG, "Error occured on Click() " + e.getMessage());
             }
         }
+    }
+
+    public void onDestroy(){
+        super.onDestroy();
+
     }
 }

@@ -9,7 +9,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -32,9 +35,10 @@ public class NewReminder extends Activity {
     protected ContentValues dataFiller;
     protected EditText titleCarrier, memoCarrier;
     private int tabSelected=0;
-    private PendingIntent pendingIntent;
-    private AlarmManager manager;
-    private Intent alarmIntent;
+    private static PendingIntent pendingIntent;
+    private static AlarmManager manager;
+    private static Intent alarmIntent;
+    private static Context ctx;
 
 
     /////////////////////////////////// added by michael //////////////////////////////////////////
@@ -74,15 +78,60 @@ public class NewReminder extends Activity {
         titleCarrier = (EditText) findViewById(R.id.titleBox);
         memoCarrier = (EditText) findViewById(R.id.memoBox);
 
+
+        manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        alarmIntent = new Intent("android.intent.action.RUN");
+        ctx = this;
     }
 
+    //check for online activity
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        if(netInfo != null && netInfo.isConnectedOrConnecting()){
+            return true;
+        }
+        else
+            buildAlertMessageNoGps();
+
+        return false;
+    }
+
+
+    //alert to turn on network activity through settings
+    //if decline return to main
+    private  void buildAlertMessageNoGps()
+    {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Your Network Access seems to be disabled, do you want to enable it?")
+                .setCancelable(false)
+                .setPositiveButton("No, Thank you", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+//                        Button button = (Button) findViewById(R.id.buttonTimeFrag);
+//                        selectFrag(button);
+
+                    }})
+                .setNegativeButton("Yes, Please",  new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startActivityForResult(new Intent(Settings.ACTION_SETTINGS),
+                        0);
+
+                    }});
+
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
 
     //method to handle fragment selected: time or location (default time)
     public void selectFrag(View fragSelected)
     // public void selectFrag(View v)
     {
-        if (fragSelected.getId() == R.id.buttonLocationFrag) {
+        if (fragSelected.getId() == R.id.buttonLocationFrag && isOnline()) {
             tabSelected = 1;
+
             if (getFragmentManager().findFragmentByTag("map") != null) {
                 if (getFragmentManager().findFragmentByTag("map").isAdded())
                 {
@@ -184,6 +233,7 @@ public class NewReminder extends Activity {
                 Long id = DatabaseHelper.getInstance(this).addData(dataFiller);
 
                 GeoFenceMain gm = new GeoFenceMain();
+                Toast.makeText(this, "here", Toast.LENGTH_LONG).show();
                 gm.addGeoFence(getApplicationContext(),id.toString(),latitude,longitude,radius);
                 break;
             case 2:
@@ -196,21 +246,24 @@ public class NewReminder extends Activity {
 
 
 
-
     }
 
     public void settingAlarm()
     {
-        manager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-
         // Retrieve a PendingIntent that will perform a broadcast
-        alarmIntent = new Intent("android.intent.action.RUN");
+
         alarmIntent.putExtra("idNumber", rowID);
-        pendingIntent = PendingIntent.getBroadcast(this, (int)rowID, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        pendingIntent = PendingIntent.getBroadcast(ctx, (int)rowID, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         manager.setRepeating(AlarmManager.RTC_WAKEUP, TimeFragment.timeAlarmMillis(), 0, pendingIntent);
         Toast.makeText(this, "Alarm Set", Toast.LENGTH_SHORT).show();
     }
 
+    public static void cancelAlarm(long cancelId)
+    {
+        pendingIntent = PendingIntent.getBroadcast(ctx, (int)cancelId, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        pendingIntent.cancel();
+        manager.cancel(pendingIntent);
+    }
 
 
 }

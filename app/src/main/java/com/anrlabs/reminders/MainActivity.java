@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteCursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,24 +20,20 @@ import com.anrlabs.locationreminder.GeoFenceMain;
 public class MainActivity extends Activity {
     Context ctx= this;
 
-    Intent intent;
-    SQLiteCursor cursor;
-    DatabaseHelper db;
+    Intent intent, intent1;
     SimpleCursorAdapter myCursorAdapter;
     protected ListView myListView;
     GeoFenceMain geoFenceMain;
 
-    private static DatabaseHelper sInstance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         intent = new Intent(this, NewReminder.class);
+        intent1 = new Intent(this, Preferences.class);
 
         populateListView();
-
-
 
        /////////////////////// on Click listener for ListView (short click)////////////////////////
 
@@ -61,13 +56,18 @@ public class MainActivity extends Activity {
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
                                            int position, long arg3) {
             boolean deleteLocation= true;
+            boolean deleteTime = true;
              TextView pos = (TextView)arg1.findViewById(R.id.id);
              String index = pos.getText().toString();
             if (((TextView)arg1.findViewById(R.id.locationName)).getText().equals(""))
             {
                 deleteLocation = false;
             }
-            deleteItemFromList(index,deleteLocation);
+            else if (((TextView) arg1.findViewById(R.id.date)).getText().equals(""))
+            {
+                deleteTime = false;
+            }
+            deleteItemFromList(index,deleteLocation, deleteTime);
 
             return true;
             }
@@ -99,6 +99,9 @@ public class MainActivity extends Activity {
             case R.id.add_reminder:
                 startActivity(intent);
                 return true;
+            case R.id.preferences:
+                startActivity(intent1);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -116,10 +119,13 @@ public class MainActivity extends Activity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        populateListView();
+    }
 
-
-
-    public void deleteItemFromList(String position, final boolean deleteLocation) {
+    public void deleteItemFromList(String position, final boolean deleteLocation, final boolean deleteTime) {
 
         final Long removeMessage = Long.parseLong(position);
         AlertDialog.Builder alert = new AlertDialog.Builder(
@@ -135,6 +141,10 @@ public class MainActivity extends Activity {
                 if (deleteLocation) {
                     geoFenceMain = new GeoFenceMain();
                     geoFenceMain.removeGeoFence(getApplication(), removeMessage.toString());
+                }
+                else if (deleteTime)
+                {
+                    NewReminder.cancelAlarm(removeMessage);
                 }
                 populateListView();
             }

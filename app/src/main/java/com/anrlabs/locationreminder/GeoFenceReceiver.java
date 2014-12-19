@@ -6,10 +6,12 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.widget.Toast;
 
 import com.anrlabs.reminders.DatabaseHelper;
 import com.anrlabs.reminders.R;
@@ -28,14 +30,18 @@ public class GeoFenceReceiver extends BroadcastReceiver {
     String[] strinIds;
     Intent broadcastIntent = new Intent();
     private long dataID;
+    public SharedPreferences pref;
+
 
     @Override
     public void onReceive(Context context, Intent intent) {
         this.context = context;
-
+        //pref = new Activity().getSharedPreferences("alert", 0);
+        Toast.makeText(context, "made it", Toast.LENGTH_LONG).show();
         if (intent.getAction().equals("com.anrlabs.ACTION_RECEIVE_GEOFENCE")) {
             // if (intent  instanceof )
             broadcastIntent.addCategory(GeoFenceConsants.CATEGORY_LOCATION_SERVICES);
+            Toast.makeText(context, "made it", Toast.LENGTH_LONG).show();
             handleEnter(intent);
         } else  if (intent.getAction().equals("android.intent.action.RUN")) {
             //call timer
@@ -82,7 +88,7 @@ public class GeoFenceReceiver extends BroadcastReceiver {
          }
     }
 
-
+/*
     private void sendNotificationNew(String title) {
         String ns = Context.NOTIFICATION_SERVICE;
         NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(ns);
@@ -110,7 +116,7 @@ public class GeoFenceReceiver extends BroadcastReceiver {
 
         mNotificationManager.notify(mynotification_id, notification);
     }
-
+*/
     private void sendNotification(String title) {
 
         Intent notificationIntent = new Intent(context, ShowReminder.class);
@@ -129,8 +135,17 @@ public class GeoFenceReceiver extends BroadcastReceiver {
         builder.setSmallIcon(R.drawable.ic_launcher)
                 .setContentTitle(title)
                 .setContentText( "Click here to open app")
-                .setContentIntent(notificationPendingIntent);
+                .setContentIntent(notificationPendingIntent)
+                .setTicker("You have a new Reminder");
         builder.setAutoCancel(true);
+        pref = context.getSharedPreferences("alert", 0);
+        if(pref.getBoolean("check",false)){
+            long[] vibrate = {0, 100, 200, 200, 200, 200};
+            builder.setVibrate(vibrate);
+
+        }
+        else
+            builder.setDefaults(Notification.DEFAULT_SOUND);
 
         // Get an instance of the Notification manager
         NotificationManager mNotificationManager = (NotificationManager) context
@@ -138,6 +153,13 @@ public class GeoFenceReceiver extends BroadcastReceiver {
 
         // Issue the notification
         mNotificationManager.notify(0, builder.build());
+        /*
+        if(pref.getBoolean("check", false))
+            mode = pref.getInt("vibrate", 0);
+        else
+            mode = pref.getInt("loud", 0);
+        audioMgr.setRingerMode(mode);
+*/
     }
 
 
@@ -185,7 +207,7 @@ public class GeoFenceReceiver extends BroadcastReceiver {
                 break;
 
             case ConnectionResult.SERVICE_MISSING:
-                errorString = "Google play sermice missing";
+                errorString = "Google play service missing";
                 break;
 
             case ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED:
