@@ -11,7 +11,6 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.widget.Toast;
 
 import com.anrlabs.reminders.DatabaseHelper;
 import com.anrlabs.reminders.R;
@@ -30,18 +29,17 @@ public class GeoFenceReceiver extends BroadcastReceiver {
     String[] strinIds;
     Intent broadcastIntent = new Intent();
     private long dataID;
+    private int mode;
     public SharedPreferences pref;
-
+    private boolean checkedVibrate, checkedRinger;
 
     @Override
     public void onReceive(Context context, Intent intent) {
         this.context = context;
-        //pref = new Activity().getSharedPreferences("alert", 0);
-        Toast.makeText(context, "made it", Toast.LENGTH_LONG).show();
+
         if (intent.getAction().equals("com.anrlabs.ACTION_RECEIVE_GEOFENCE")) {
             // if (intent  instanceof )
             broadcastIntent.addCategory(GeoFenceConsants.CATEGORY_LOCATION_SERVICES);
-            Toast.makeText(context, "made it", Toast.LENGTH_LONG).show();
             handleEnter(intent);
         } else  if (intent.getAction().equals("android.intent.action.RUN")) {
             //call timer
@@ -153,13 +151,6 @@ public class GeoFenceReceiver extends BroadcastReceiver {
 
         // Issue the notification
         mNotificationManager.notify(0, builder.build());
-        /*
-        if(pref.getBoolean("check", false))
-            mode = pref.getInt("vibrate", 0);
-        else
-            mode = pref.getInt("loud", 0);
-        audioMgr.setRingerMode(mode);
-*/
     }
 
 
