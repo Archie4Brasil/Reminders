@@ -14,7 +14,6 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
-import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -57,6 +56,7 @@ public class NewReminder extends Activity {
     public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
+
     public void setLocationName(String location) {
         this.location_name = location;
     }
@@ -162,7 +162,8 @@ public class NewReminder extends Activity {
                         && getFragmentManager().findFragmentByTag("map").isAdded()) {
                     getFragmentManager().beginTransaction().hide(mapFragment).commit();
                 }
-                getFragmentManager().beginTransaction().add(R.id.main_frag, timeFragment,"time").commit();
+                getFragmentManager().beginTransaction().add(R.id.main_frag, timeFragment,"time")
+                        .commit();
             }
        }
     }
@@ -230,6 +231,7 @@ public class NewReminder extends Activity {
                 dataFiller.put(DatabaseHelper.YCOORDS,longitude.toString());
                 dataFiller.put(DatabaseHelper.RADIUS,radius.toString());
                 dataFiller.put(DatabaseHelper.LOCATION_NAME,location_name);
+                dataFiller.put(DatabaseHelper.DELIVER, "1");
 
                 Long id = DatabaseHelper.getInstance(this).addData(dataFiller);
 
@@ -240,6 +242,7 @@ public class NewReminder extends Activity {
             case 2:
                 dataFiller.put(DatabaseHelper.TIME, time);
                 dataFiller.put(DatabaseHelper.DATE, date);
+                dataFiller.put(DatabaseHelper.DELIVER, "2");
 
                 rowID = DatabaseHelper.getInstance(this).addData(dataFiller);
                 break;
@@ -254,17 +257,32 @@ public class NewReminder extends Activity {
         // Retrieve a PendingIntent that will perform a broadcast
 
         alarmIntent.putExtra("idNumber", rowID);
-        pendingIntent = PendingIntent.getBroadcast(ctx, (int)rowID, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        manager.setRepeating(AlarmManager.RTC_WAKEUP, TimeFragment.timeAlarmMillis(), 0, pendingIntent);
+        pendingIntent = PendingIntent.getBroadcast(ctx, (int)rowID, alarmIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        manager.setRepeating(AlarmManager.RTC_WAKEUP, TimeFragment.timeAlarmMillis(), 0,
+                pendingIntent);
         Toast.makeText(this, "Alarm Set", Toast.LENGTH_SHORT).show();
     }
 
     public static void cancelAlarm(long cancelId)
     {
-        pendingIntent = PendingIntent.getBroadcast(ctx, (int)cancelId, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        pendingIntent = PendingIntent.getBroadcast(ctx, (int) cancelId, alarmIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
         pendingIntent.cancel();
         manager.cancel(pendingIntent);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        timeFragment.onPause();
+        mapFragment.onPause();
+    }
 
 }

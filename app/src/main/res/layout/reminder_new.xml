@@ -24,6 +24,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:maxLines="1"
             android:textSize="15dp"
             android:hint="Enter Title of Activity"
             android:id="@+id/titleBox" />
@@ -50,6 +51,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="textMultiLine"
+            android:maxLines="2"
             android:textSize="15dp"
             android:hint="Details of Activity"
             android:id="@+id/memoBox" />

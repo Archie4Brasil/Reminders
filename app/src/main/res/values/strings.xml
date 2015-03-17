@@ -2,10 +2,10 @@
 <resources>
 
     <string name="app_name">Reminders</string>
-    <string name="TODO">TO-DO : </string>
-    <string name="Notes">Notes : </string>
-    <string name="Time">Date-Time : </string>
-    <string name="Location">Location : </string>
+    <string name="TODO">TO-DO :\t</string>
+    <string name="Notes">Notes :\t</string>
+    <string name="Time">Date-Time :\t</string>
+    <string name="Location">Location :\t</string>
     <string name="blank"></string>
     <string name="action_settings">Settings</string>
     <string name="new_reminders">Settings</string>

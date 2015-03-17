@@ -27,6 +27,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     static final String RADIUS = "radius";
     static final String TABLE = "reminders";
     static final String LOCATION_NAME = "locationName";
+    public static final String DELIVER = "delivered";
 
     private static final String DATABASE_NAME = "db";
 
@@ -43,9 +44,10 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE " + TABLE + " ("+ID +" INTEGER PRIMARY KEY AUTOINCREMENT, " + TITLE +
-                " TEXT, "+ MESSAGE + " TEXT, " + DATE + " TEXT, "+ TIME + " TEXT, " + XCOORDS +
-                " TEXT, " + YCOORDS + " TEXT, " + RADIUS + " TEXT, " + LOCATION_NAME +" TEXT);");
+        db.execSQL("CREATE TABLE " + TABLE + " ("+ID +" INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + TITLE + " TEXT, "+ MESSAGE + " TEXT, " + DATE + " TEXT, "+ TIME + " TEXT, "
+                + XCOORDS + " TEXT, " + YCOORDS + " TEXT, " + RADIUS + " TEXT, " + LOCATION_NAME
+                + " TEXT, " + DELIVER + " TEXT);");
     }
 
 
@@ -61,9 +63,10 @@ public class DatabaseHelper extends SQLiteOpenHelper
         onCreate(db);
     }
 
-    public void insert(ContentValues cv) {
-        this.getWritableDatabase().insert(TABLE, TITLE, cv);
+    public void update(long id, ContentValues cv) {
+        this.getWritableDatabase().update(TABLE, cv, "_id=" + id, null);
     }
+
 
     public void deleteData(long dataItem){
         this.getWritableDatabase().delete(TABLE, "_id = " + dataItem, null);
@@ -81,12 +84,13 @@ public class DatabaseHelper extends SQLiteOpenHelper
     }
 
     public Cursor loadReminders(){
-        cursor = (SQLiteCursor) this.getReadableDatabase().rawQuery("SELECT " + DatabaseHelper.ID + ", "
-                + DatabaseHelper.TITLE + ", " + DatabaseHelper.MESSAGE + ", "
+        cursor = (SQLiteCursor) this.getReadableDatabase().rawQuery("SELECT " + DatabaseHelper.ID
+                + ", " + DatabaseHelper.TITLE + ", " + DatabaseHelper.MESSAGE + ", "
                 + DatabaseHelper.DATE + ", " + DatabaseHelper.TIME + ", "
-                + DatabaseHelper.XCOORDS + ", " + DatabaseHelper.YCOORDS + ", " + DatabaseHelper.RADIUS +
-                ", " + DatabaseHelper.LOCATION_NAME +
-                " FROM " + DatabaseHelper.TABLE + " ORDER BY " + DatabaseHelper.ID + " DESC", null);
+                + DatabaseHelper.XCOORDS + ", " + DatabaseHelper.YCOORDS + ", "
+                + DatabaseHelper.RADIUS + ", " + DatabaseHelper.LOCATION_NAME + ", "
+                + DatabaseHelper.DELIVER + " FROM " + DatabaseHelper.TABLE + " ORDER BY "
+                + DatabaseHelper.ID + " DESC", null);
         return cursor;
     }
 
@@ -94,8 +98,9 @@ public class DatabaseHelper extends SQLiteOpenHelper
         cursor = this.getWritableDatabase().query(DatabaseHelper.TABLE, new String[]{DatabaseHelper.ID,
                         DatabaseHelper.TITLE, DatabaseHelper.MESSAGE, DatabaseHelper.DATE,
                         DatabaseHelper.TIME, DatabaseHelper.XCOORDS, DatabaseHelper.YCOORDS,
-                        DatabaseHelper.RADIUS,DatabaseHelper.LOCATION_NAME}, DatabaseHelper.ID + "=?",
-                new String[] { String.valueOf(id) }, null, null, null, null);
+                        DatabaseHelper.RADIUS,DatabaseHelper.LOCATION_NAME, DatabaseHelper.DELIVER},
+                        DatabaseHelper.ID + "=?", new String[] { String.valueOf(id) }, null, null,
+                        null, null);
        return cursor;
     }
 
@@ -120,24 +125,20 @@ public class DatabaseHelper extends SQLiteOpenHelper
     }
 
     public String[] getAddresses(){
-        Cursor cursor = this.getReadableDatabase().rawQuery("SELECT * FROM "
-                + TABLE, null);
+        Cursor cursor = this.getReadableDatabase().rawQuery("SELECT * FROM " + TABLE, null);
         if(cursor.getCount() > 0)
         {
             String[] str = new String[cursor.getCount()];
             int i = 0;
-        while (cursor.moveToNext()){
-            str[i] = cursor.getString(cursor.getColumnIndex(LOCATION_NAME));
-            i++;
-        }
+            while (cursor.moveToNext()){
+                str[i] = cursor.getString(cursor.getColumnIndex(LOCATION_NAME));
+                i++;
+            }
             return str;
         }
         else
         {
             return new String[] {};
         }
-
     }
-
-
 }

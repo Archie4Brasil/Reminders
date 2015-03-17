@@ -1,13 +1,12 @@
 package com.anrlabs.reminders;
 
-import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
@@ -20,6 +19,7 @@ public class AlarmHandler extends BroadcastReceiver {
     private int numMessages = 0;
     private long dataID;
     private String title = "Title";
+    protected ContentValues dataFiller;
 
 
 
@@ -27,6 +27,9 @@ public class AlarmHandler extends BroadcastReceiver {
     public void onReceive(Context arg0, Intent arg1) {
 
         dataID = arg1.getLongExtra("idNumber", -1);
+        dataFiller = new ContentValues();
+        dataFiller.put(DatabaseHelper.DELIVER, "4");
+        DatabaseHelper.getInstance(arg0).update(dataID, dataFiller);
 
 
         if(dataID>(-1))
@@ -41,7 +44,7 @@ public class AlarmHandler extends BroadcastReceiver {
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(arg0)
-                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setSmallIcon(R.drawable.l_7138cc_compass)
                         .setContentTitle(title)
                         .setContentText("Check Reminder");
 

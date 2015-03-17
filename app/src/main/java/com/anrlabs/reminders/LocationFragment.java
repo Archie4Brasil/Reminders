@@ -49,7 +49,8 @@ public class LocationFragment extends Fragment implements View.OnClickListener {
     private ArrayAdapter<String> adapter;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.location_frag, container, false);
         textAddress = (AutoCompleteTextView) view.findViewById(R.id.address);
         textRadius = (EditText) view.findViewById(R.id.radius);
@@ -145,6 +146,8 @@ public class LocationFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+        googleMap.clear();
+
         if (textAddress.getText() == null || textRadius.getText() == null
                 || textAddress.getText().toString().isEmpty() ||
                 textRadius.getText().toString().isEmpty()) {

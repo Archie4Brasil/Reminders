@@ -42,7 +42,8 @@ public class MainActivity extends Activity {
            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                TextView pos = (TextView)view.findViewById(R.id.id);
                String index = pos.getText().toString();
-               Intent showReminder = new Intent(getApplicationContext(), ShowReminder.class);
+               Intent showReminder = new Intent(getApplicationContext(),
+                       ShowReminder.class);
                showReminder.putExtra("notificationId", index);
                startActivity(showReminder);
 
@@ -57,8 +58,8 @@ public class MainActivity extends Activity {
                                            int position, long arg3) {
             boolean deleteLocation= true;
             boolean deleteTime = true;
-             TextView pos = (TextView)arg1.findViewById(R.id.id);
-             String index = pos.getText().toString();
+            TextView pos = (TextView)arg1.findViewById(R.id.id);
+            String index = pos.getText().toString();
             if (((TextView)arg1.findViewById(R.id.locationName)).getText().equals(""))
             {
                 deleteLocation = false;
@@ -111,8 +112,9 @@ public class MainActivity extends Activity {
         Cursor cursor = DatabaseHelper.getInstance(this).loadReminders();
         myCursorAdapter = new SimpleCursorAdapter(this, R.layout.row,
                 cursor, new String[]{DatabaseHelper.ID, DatabaseHelper.TITLE,
-                DatabaseHelper.DATE, DatabaseHelper.TIME,DatabaseHelper.LOCATION_NAME},
-                new int[]{R.id.id, R.id.title, R.id.date, R.id.time,R.id.locationName}, 0);
+                DatabaseHelper.DATE, DatabaseHelper.TIME,DatabaseHelper.LOCATION_NAME,
+                DatabaseHelper.DELIVER}, new int[]{R.id.id, R.id.title, R.id.date, R.id.time,
+                R.id.locationName, R.id.delivered}, 0);
 
         myListView = (ListView) findViewById(R.id.listViewMain);
         myListView.setAdapter(myCursorAdapter);
@@ -125,7 +127,8 @@ public class MainActivity extends Activity {
         populateListView();
     }
 
-    public void deleteItemFromList(String position, final boolean deleteLocation, final boolean deleteTime) {
+    public void deleteItemFromList(String position, final boolean deleteLocation,
+                                   final boolean deleteTime) {
 
         final Long removeMessage = Long.parseLong(position);
         AlertDialog.Builder alert = new AlertDialog.Builder(
@@ -140,7 +143,8 @@ public class MainActivity extends Activity {
                 DatabaseHelper.getInstance(ctx).deleteData(removeMessage);
                 if (deleteLocation) {
                     geoFenceMain = new GeoFenceMain();
-                    geoFenceMain.removeGeoFence(getApplication(), removeMessage.toString());
+                    geoFenceMain.removeGeoFence(getApplication(),
+                            removeMessage.toString());
                 }
                 else if (deleteTime)
                 {
@@ -161,8 +165,5 @@ public class MainActivity extends Activity {
         });
 
         alert.show();
-
-
     }
-
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -7,7 +8,13 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#0099cc"
+        android:text="ID"
+        android:visibility="invisible"
+        android:id="@+id/id" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_alignParentLeft="true"
         android:textSize="20sp"
@@ -18,42 +25,45 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ID"
-        android:visibility="invisible"
-        android:id="@+id/id" />
-
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
-        android:textColor="#0099cc"
         android:layout_below="@id/title"
         android:text="Date"
         android:textSize="15sp"
-        android:id="@+id/date"
-        />
+        android:id="@+id/date"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
-        android:textColor="#0099cc"
         android:layout_toRightOf="@id/date"
         android:layout_below="@id/title"
         android:text="Time"
         android:textSize="15sp"
-        android:id="@+id/time"
-        />
+        android:id="@+id/time"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
-        android:textColor="#0099cc"
         android:layout_below="@id/date"
         android:text="Location"
         android:textSize="15sp"
-        android:id="@+id/locationName"
-        />
+        android:id="@+id/locationName"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/locationName"
+        android:text="delivered"
+        android:id="@+id/delivered" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/icon"
+        android:layout_alignBottom="@+id/locationName"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/oa_db0518_alarm_clock"/>
 
 </RelativeLayout>
